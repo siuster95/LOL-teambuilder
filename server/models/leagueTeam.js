@@ -48,6 +48,10 @@ const leagueTeamSchema = new mongoose.Schema({
     trim: true,
     default: null,
   },
+    
+  Count: {
+      type:Number,
+  }
   
   createData: {
     type: Date,
@@ -88,6 +92,7 @@ leagueTeamSchema.statics.change = ( req, teamname, callback) => {
 
   const change = {};
   const set = {};
+  const inc = {};
 
 switch (req.session.account.Role) {
     case "Top":
@@ -109,8 +114,9 @@ switch (req.session.account.Role) {
     console.log("No Role for some reason");
 }
 
+  inc.Count = 1;
   change.$set = set;
-
+  change.$inc = inc;
   return leagueTeamModel.update(search, change).exec(callback);
 };
 

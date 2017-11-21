@@ -44,6 +44,7 @@ const makeTeam = (req,res) => {
     
     teamData.name = req.body.name;
     teamData.owner = req.session.account._id;
+    teamData.Count = 1;
     const newteam = new leagueTeam.leagueTeamModel(teamData);
   
     const teamPromise = newteam.save();

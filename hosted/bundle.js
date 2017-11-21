@@ -2,6 +2,7 @@
 
 var teamjoinedname = void 0;
 var role = void 0;
+var intervalId = void 0;
 
 var handleDomo = function handleDomo(e) {
     e.preventDefault();
@@ -251,6 +252,8 @@ var join = function join(e, teamname, csrf) {
 
         sendAjax("POST", "/jointeam", data, function () {
             loadSpecificTeamsFromServer();
+
+            intervalId = setInterval(loadSpecificTeamsFromServer, 10);
         });
     });
     return false;
@@ -261,6 +264,7 @@ var leave = function leave(e, teamname) {
     sendAjax("GET", "/getToken", null, function (result) {
         var data = "teamname=" + teamname + "&_csrf=" + result.csrfToken;
         sendAjax("POST", "/leaveTeam", data, function () {
+            clearInterval(intervalId);
             sendAjax("GET", "/getTeams", null, function (data) {
                 ReactDOM.render(React.createElement(LeagueList, { leagueteams: data.teams }), document.querySelector("#leagueTeamgroup"));
             });

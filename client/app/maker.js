@@ -1,5 +1,6 @@
 let teamjoinedname;
 let role;
+let intervalId;
 
 const handleDomo = (e) => {
   e.preventDefault();
@@ -217,6 +218,10 @@ const join = (e, teamname, csrf) => {
     
      sendAjax("POST", "/jointeam", data ,() => {
      loadSpecificTeamsFromServer();
+         
+      intervalId = setInterval(loadSpecificTeamsFromServer, 10);    
+         
+         
   });
     
 });
@@ -228,6 +233,7 @@ const leave = (e, teamname) => {
   sendAjax("GET", "/getToken", null, (result) => {
       let data = `teamname=${teamname}&_csrf=${result.csrfToken}`; 
     sendAjax("POST", "/leaveTeam", data, () => {
+        clearInterval(intervalId);
         sendAjax("GET", "/getTeams", null, (data) => {
             ReactDOM.render(
                 <LeagueList leagueteams={data.teams} />, document.querySelector("#leagueTeamgroup")  
