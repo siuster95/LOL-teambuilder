@@ -1,12 +1,12 @@
 const mongoose = require('mongoose');
 mongoose.Promise = global.Promise;
-const _ = require('underscore');
+// const _ = require('underscore');
 
-let leagueTeamModel = {};
+let LeagueTeamModel = {};
 
 // mongoose.Types.ObjectID is a function that converts string ID to real mongo ID
 const convertID = mongoose.Types.ObjectId;
-const setName = (name) => _.escape(name).trim();
+// const setName = (name) => _.escape(name).trim();
 
 const leagueTeamSchema = new mongoose.Schema({
   owner: {
@@ -14,10 +14,10 @@ const leagueTeamSchema = new mongoose.Schema({
     required: true,
     ref: 'Account',
   },
-  name:{
+  name: {
     type: String,
-    trim:true,
-    unique:true,
+    trim: true,
+    unique: true,
   },
   Top: {
     type: String,
@@ -44,15 +44,15 @@ const leagueTeamSchema = new mongoose.Schema({
   },
 
   Support: {
-    type:String,
+    type: String,
     trim: true,
     default: null,
   },
-    
+
   Count: {
-      type:Number,
-  }
-  
+    type: Number,
+  },
+
   createData: {
     type: Date,
     default: Date.now(),
@@ -64,16 +64,12 @@ leagueTeamSchema.statics.toAPI = (doc) => ({
   age: doc.age,
 });
 
-leagueTeamSchema.statics.findAll = (callback) => {
+leagueTeamSchema.statics.findAll = (callback) => LeagueTeamModel.find().exec(callback);
 
-  return leagueTeamModel.find().exec(callback);
-};
+leagueTeamSchema.statics.findOneTeam = (teamname, callback) => {
+  const querystring = { name: teamname };
 
-leagueTeamSchema.statics.findOneTeam = (teamname,callback) => {
-  
-    let querystring = {name : teamname};
-    
-    return leagueTeamModel.findOne(querystring).exec(callback);
+  return LeagueTeamModel.findOne(querystring).exec(callback);
 };
 
 leagueTeamSchema.statics.delete = (id, name, callback) => {
@@ -85,7 +81,7 @@ leagueTeamSchema.statics.delete = (id, name, callback) => {
 };
 
 
-leagueTeamSchema.statics.change = ( req, teamname, callback) => {
+leagueTeamSchema.statics.change = (req, teamname, callback) => {
   const search = {
     name: teamname,
   };
@@ -94,63 +90,61 @@ leagueTeamSchema.statics.change = ( req, teamname, callback) => {
   const set = {};
   const inc = {};
 
-switch (req.session.account.Role) {
-    case "Top":
-        set.Top = req.session.account.username;
-        break;
-    case "Jungle":
-        set.Jungle = req.session.account.username;
-        break;
-    case "Mid":
-        set.Mid = req.session.account.username;
-        break;
-    case "ADC":
-        set.Jungle = req.session.account.username;
-        break;
-    case "Support":
-        set.Support = req.session.account.username;
-        break;
+  switch (req.session.account.Role) {
+    case 'Top':
+      set.Top = req.session.account.username;
+      break;
+    case 'Jungle':
+      set.Jungle = req.session.account.username;
+      break;
+    case 'Mid':
+      set.Mid = req.session.account.username;
+      break;
+    case 'ADC':
+      set.Jungle = req.session.account.username;
+      break;
+    case 'Support':
+      set.Support = req.session.account.username;
+      break;
     default:
-    console.log("No Role for some reason");
-}
+      console.log('No Role for some reason');
+  }
 
   inc.Count = 1;
   change.$set = set;
   change.$inc = inc;
-  return leagueTeamModel.update(search, change).exec(callback);
+  return LeagueTeamModel.update(search, change).exec(callback);
 };
 
 leagueTeamSchema.statics.leave = (req, teamname, callback) => {
+  const filter = {
+    name: teamname,
+  };
+  const update = {};
+  switch (req.session.account.Role) {
+    case 'Top':
+      update.Top = '';
+      break;
+    case 'Jungle':
+      update.Jungle = '';
+      break;
+    case 'Mid':
+      update.Mid = '';
+      break;
+    case 'ADC':
+      update.ADC = '';
+      break;
+    case 'Support':
+      update.Support = '';
+      break;
+    default:
+      console.log('No Role for some reason');
+  }
 
-    const filter = {
-        name: teamname,
-    };
-    const update = {};
-    switch (req.session.account.Role) {
-        case "Top":
-            update.Top = "";
-            break;
-        case "Jungle":
-            update.Jungle = "";
-            break;
-        case "Mid":
-            update.Mid = "";
-            break;
-        case "ADC":
-            update.ADC = "";
-            break;
-        case "Support":
-            update.Support = "";
-            break;
-        default:
-        console.log("No Role for some reason");  
-    }
-    
-    return leagueTeamModel.findOneAndUpdate(filter,update).exec(callback);
-    
+  return LeagueTeamModel.findOneAndUpdate(filter, update).exec(callback);
 };
 
-leagueTeamModel = mongoose.model('leagueTeam', leagueTeamSchema);
+LeagueTeamModel = mongoose.model('leagueTeam', leagueTeamSchema);
 
-module.exports.leagueTeamModel = leagueTeamModel;
+module.exports.LeagueTeamModel = LeagueTeamModel;
 module.exports.leagueTeamSchema = leagueTeamSchema;

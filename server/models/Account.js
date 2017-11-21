@@ -31,7 +31,7 @@ const AccountSchema = new mongoose.Schema({
   Role: {
     type: String,
     required: true,
-  }
+  },
 });
 
 AccountSchema.statics.toAPI = doc => ({
