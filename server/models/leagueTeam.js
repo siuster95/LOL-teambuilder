@@ -123,26 +123,30 @@ leagueTeamSchema.statics.leave = (req, teamname, callback) => {
   const update = {};
   switch (req.session.account.Role) {
     case 'Top':
-      update.Top = '';
+      update.Top = null;
       break;
     case 'Jungle':
-      update.Jungle = '';
+      update.Jungle = null;
       break;
     case 'Mid':
-      update.Mid = '';
+      update.Mid = null;
       break;
     case 'ADC':
-      update.ADC = '';
+      update.ADC = null;
       break;
     case 'Support':
-      update.Support = '';
+      update.Support = null;
       break;
     default:
       console.log('No Role for some reason');
   }
-
+  update.$inc = { Count: -1};
   return LeagueTeamModel.findOneAndUpdate(filter, update).exec(callback);
 };
+
+leagueTeamSchema.statics.removeAll = (callback) => {
+    return LeagueTeamModel.deleteMany({Count:0}).exec(callback);
+}
 
 LeagueTeamModel = mongoose.model('leagueTeam', leagueTeamSchema);
 

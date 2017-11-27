@@ -2,8 +2,10 @@ const models = require('../models');
 
 const Account = models.Account;
 
+const path = require("path");
+
 const loginPage = (req, res) => {
-  res.render('login', { csrfToken: req.csrfToken() });
+  return res.sendFile(path.join(`${__dirname} + /../../views/login.html`));
 };
 
 const logout = (req, res) => {
@@ -92,8 +94,40 @@ const getToken = (request, response) => {
   res.json(csrfJSON);
 };
 
+const changePWorRole = (request, response) => {
+  const req = request;
+  const res = response;
+  
+  //cast to string
+  req.body.passC = `${req.body.passC}`;
+  req.body.roleC = `${req.body.roleC}`;
+    
+  return Account.AccountModel.generateHash(req.body.passC, (salt, hash) => {
+    const accountData = {
+      salt,
+      password: hash,
+    };
+      
+    Account.AccountModel.ChangePWandRole(req.session.account.username,req.body.passC,req.body.roleC, accountData, (err, account) => {
+      
+      if(err) {
+        console.log(err);
+        return res.status(400).json({ data: 'An error occurred' });
+      }
+      
+      if(req.body.roleC != "NoChange")
+      {
+        req.session.account.Role = req.body.roleC;
+      }
+      return res.json({ Role: req.body.roleC });
+      
+  });
+ });
+};
+
 module.exports.loginPage = loginPage;
 module.exports.login = login;
 module.exports.logout = logout;
 module.exports.signup = signup;
 module.exports.getToken = getToken;
+module.exports.ChangePWandR = changePWorRole;

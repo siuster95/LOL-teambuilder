@@ -17,7 +17,7 @@ html, body {
 nav {
     width: 100%;
     height: 50px;
-    background-color: #55acee;
+    background-color: black;
 }
 
 nav:nth-child(1) {
@@ -28,23 +28,34 @@ nav:nth-child(1) {
     padding: 5px;
     padding-top: 12px;
     padding-left: 20px;
-    color: white;
     font-size: 1.3em;
     float: left;
 }
 
-.navlink a, .navlink a:link, .navlink a:visited, .navlink a:hover, .navlink a:active {
-    color: white;
+ .navlink a {
+    color: #c9aa71;
+    text-decoration: none;
+    padding: 5px;
+    transition: color 0.4s ease-out;
+
+}
+ .navlink a:hover {
+    color: #f7e8cd;
     text-decoration: none;
     padding: 5px;
     border-radius: 4px;
-    background-color: #55acee;
-    transition: background-color 0.4s ease;
 }
 
-.navlink a:hover {
-    transition: background-color 0.8s ease;
-    background-color: #66bdff;
+#intro{
+    position:relative;
+    top:185px;
+    width:525px;
+    margin:auto;
+}
+
+#lolLogo{
+    position:relative;
+    top:25px;
 }
 
 .domoForm {
@@ -111,18 +122,18 @@ nav:nth-child(1) {
 }
 
 .formSubmit {
-    transition: background-color 0.4s ease;
+    transition: background-color color 0.4s ease;
     display: block;
     text-align: center;
     margin: 0 auto;
     margin-top: 14px;
     font-size: 1.2em;
     width: 100px;
-    background-color: #55acee;
+    background-color: rgb(0,0,150);
     border-radius: 2px;
     border-color: #66acee;
     padding: 3px 0px;
-    color: white;
+    color: deepskyblue;
     text-decoration: none;
 }
 
@@ -132,7 +143,7 @@ nav:nth-child(1) {
 
 .formSubmit:hover {
     transition: background-color 0.4s ease;
-    background-color: #338acc;
+    background-color: rgb(0,0,250);
 }
 
 #user, #pass, #pass2 {
@@ -345,5 +356,15 @@ h3.domoWeight {
     position:relative;
     left:150px;
     top:60px;
+}
+a:hover {
+ cursor:pointer;
+}
+
+footer {
+    width:100%;
+    text-align:center;
+    background-color:black;
+    color: #c9aa71;
 }
 

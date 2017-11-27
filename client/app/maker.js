@@ -1,6 +1,8 @@
 let teamjoinedname;
 let role;
 let intervalId;
+let ChangePWlink;
+
 
 const handleDomo = (e) => {
   e.preventDefault();
@@ -17,6 +19,35 @@ const handleDomo = (e) => {
   });
     
     return false;
+};
+
+const handlePWChange = (e) => {
+  e.preventDefault();
+    
+  $("#domoMessage").animate({width:"hide"},350);
+    
+    if($("#passC").val() !=  $("#pass2C").val())
+    {
+      console.log($("#passC").val());
+      console.log($("#pass2C").val());
+      handleError("RAWR! Passwords must match");
+      return false;
+    }
+  sendAjax("POST", $("#ChangePWorRoleForm").attr("action"), $("#ChangePWorRoleForm").serialize(), (result) => {
+      
+      if(result.Role != "NoChange")
+    {
+      role = result.Role;
+    }
+      loadTeamsFromServer();
+    
+        if(intervalId == -1)
+        {
+            intervalId = setInterval(loadTeamsFromServer, 50); 
+        }
+      
+  });
+  return false;
 };
 
 const handleleagueTeam = (e) => {
@@ -38,6 +69,11 @@ const handleleagueTeam = (e) => {
     
     sendAjax("POST", $("#leagueForm").attr("action"), $("#leagueForm").serialize(), (returnvalue) => {
         loadSpecificTeamsFromServer();
+        
+        if(intervalId == -1)
+        {
+            intervalId = setInterval(loadSpecificTeamsFromServer, 50); 
+        }
   });
     
     return false;   
@@ -184,7 +220,8 @@ const cancel = () => {
 };
 
 const LeagueTeamMaker = (e, csrf) => {
-    
+    clearInterval(intervalId);
+    intervalId = -1;
     const Maker = () => {
         return (
         <form id="leagueForm" onSubmit = {handleleagueTeam} name="leagueForm" action="/maketeam" method="POST" className="domoForm">
@@ -208,6 +245,9 @@ const LeagueTeamMaker = (e, csrf) => {
 const join = (e, teamname, csrf) => {
     e.preventDefault();
     
+    clearInterval(intervalId);
+    intervalId = -1;
+    
     $("#domoMessage").animate({width:"hide"},350);
     
     sendAjax("GET", "/getToken", null, (result) => {
@@ -219,7 +259,10 @@ const join = (e, teamname, csrf) => {
      sendAjax("POST", "/jointeam", data ,() => {
      loadSpecificTeamsFromServer();
          
-      intervalId = setInterval(loadSpecificTeamsFromServer, 10);    
+        if(intervalId == -1)
+        {
+            intervalId = setInterval(loadSpecificTeamsFromServer, 50); 
+        }  
          
          
   });
@@ -235,8 +278,13 @@ const leave = (e, teamname) => {
     sendAjax("POST", "/leaveTeam", data, () => {
         clearInterval(intervalId);
         sendAjax("GET", "/getTeams", null, (data) => {
+        if(intervalId == undefined)
+        {
+            intervalId = setInterval(loadTeamsFromServer, 50); 
+        }
             ReactDOM.render(
                 <LeagueList leagueteams={data.teams} />, document.querySelector("#leagueTeamgroup")  
+                
        ); 
      }); 
    });
@@ -354,6 +402,48 @@ const setup = function(csrf) {
     
     //grab the list
     loadTeamsFromServer();
+    
+        if(intervalId == -1)
+        {
+            intervalId = setInterval(loadTeamsFromServer, 50); 
+        }
+    
+   ChangePWlink = document.querySelector("#ChangePW");
+   ChangePWlink.addEventListener("click", (e) => {
+       onChangePWclick(csrf);
+   });
+};
+
+const onChangePWclick = (csrf) => {
+    
+    clearInterval(intervalId);
+    intervalId = -1;
+    
+    let PWChange = (props) => { 
+        return (
+    <form id="ChangePWorRoleForm" name="ChangePWorRoleForm" onSubmit = {handlePWChange} action="/ChangePW" method="POST" className="mainForm">
+    <label htmlFor="passC">New Password: </label>
+    <input id="passC" type="password" name="passC" placeholder="password"/>
+    <label htmlFor="pass2C">New Password again: </label>
+    <input id="pass2C" type="password" name="pass2C" placeholder="password Again"/>
+    <label htmlFor="roleC">Role: </label>
+    <select id="roleC" name="roleC">
+        <option value="NoChange">No Change</option>
+        <option value="Top">Top</option>
+        <option value="Jungle">Jungle</option>
+        <option value="Mid">Mid</option>
+        <option value="ADC">ADC</option>
+        <option value="Support">Support</option>
+    </select>
+    <input type="hidden" name="_csrf" value={props.csrf}/>
+    <input className="formSubmit" type="submit" value="Submit"/>
+    </form>
+    );
+    };
+    
+    ReactDOM.render(
+    <PWChange csrf={csrf} />, document.querySelector("#leagueTeamgroup") 
+    );
 };
 
 const getToken = () => {
@@ -369,6 +459,8 @@ const getRole = () => {
 }
 
 $(document).ready(function() {
+   intervalId = -1;
    getToken(); 
    getRole();
+
 });

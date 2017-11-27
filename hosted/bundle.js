@@ -3,6 +3,7 @@
 var teamjoinedname = void 0;
 var role = void 0;
 var intervalId = void 0;
+var ChangePWlink = void 0;
 
 var handleDomo = function handleDomo(e) {
     e.preventDefault();
@@ -18,6 +19,31 @@ var handleDomo = function handleDomo(e) {
         loadDomosFromServer();
     });
 
+    return false;
+};
+
+var handlePWChange = function handlePWChange(e) {
+    e.preventDefault();
+
+    $("#domoMessage").animate({ width: "hide" }, 350);
+
+    if ($("#passC").val() != $("#pass2C").val()) {
+        console.log($("#passC").val());
+        console.log($("#pass2C").val());
+        handleError("RAWR! Passwords must match");
+        return false;
+    }
+    sendAjax("POST", $("#ChangePWorRoleForm").attr("action"), $("#ChangePWorRoleForm").serialize(), function (result) {
+
+        if (result.Role != "NoChange") {
+            role = result.Role;
+        }
+        loadTeamsFromServer();
+
+        if (intervalId == -1) {
+            intervalId = setInterval(loadTeamsFromServer, 50);
+        }
+    });
     return false;
 };
 
@@ -38,6 +64,10 @@ var handleleagueTeam = function handleleagueTeam(e) {
 
     sendAjax("POST", $("#leagueForm").attr("action"), $("#leagueForm").serialize(), function (returnvalue) {
         loadSpecificTeamsFromServer();
+
+        if (intervalId == -1) {
+            intervalId = setInterval(loadSpecificTeamsFromServer, 50);
+        }
     });
 
     return false;
@@ -217,7 +247,8 @@ var cancel = function cancel() {
 };
 
 var LeagueTeamMaker = function LeagueTeamMaker(e, csrf) {
-
+    clearInterval(intervalId);
+    intervalId = -1;
     var Maker = function Maker() {
         return React.createElement(
             "form",
@@ -242,6 +273,9 @@ var LeagueTeamMaker = function LeagueTeamMaker(e, csrf) {
 var join = function join(e, teamname, csrf) {
     e.preventDefault();
 
+    clearInterval(intervalId);
+    intervalId = -1;
+
     $("#domoMessage").animate({ width: "hide" }, 350);
 
     sendAjax("GET", "/getToken", null, function (result) {
@@ -253,7 +287,9 @@ var join = function join(e, teamname, csrf) {
         sendAjax("POST", "/jointeam", data, function () {
             loadSpecificTeamsFromServer();
 
-            intervalId = setInterval(loadSpecificTeamsFromServer, 10);
+            if (intervalId == -1) {
+                intervalId = setInterval(loadSpecificTeamsFromServer, 50);
+            }
         });
     });
     return false;
@@ -266,6 +302,9 @@ var leave = function leave(e, teamname) {
         sendAjax("POST", "/leaveTeam", data, function () {
             clearInterval(intervalId);
             sendAjax("GET", "/getTeams", null, function (data) {
+                if (intervalId == undefined) {
+                    intervalId = setInterval(loadTeamsFromServer, 50);
+                }
                 ReactDOM.render(React.createElement(LeagueList, { leagueteams: data.teams }), document.querySelector("#leagueTeamgroup"));
             });
         });
@@ -446,6 +485,83 @@ var setup = function setup(csrf) {
 
     //grab the list
     loadTeamsFromServer();
+
+    if (intervalId == -1) {
+        intervalId = setInterval(loadTeamsFromServer, 50);
+    }
+
+    ChangePWlink = document.querySelector("#ChangePW");
+    ChangePWlink.addEventListener("click", function (e) {
+        onChangePWclick(csrf);
+    });
+};
+
+var onChangePWclick = function onChangePWclick(csrf) {
+
+    clearInterval(intervalId);
+    intervalId = -1;
+
+    var PWChange = function PWChange(props) {
+        return React.createElement(
+            "form",
+            { id: "ChangePWorRoleForm", name: "ChangePWorRoleForm", onSubmit: handlePWChange, action: "/ChangePW", method: "POST", className: "mainForm" },
+            React.createElement(
+                "label",
+                { htmlFor: "passC" },
+                "New Password: "
+            ),
+            React.createElement("input", { id: "passC", type: "password", name: "passC", placeholder: "password" }),
+            React.createElement(
+                "label",
+                { htmlFor: "pass2C" },
+                "New Password again: "
+            ),
+            React.createElement("input", { id: "pass2C", type: "password", name: "pass2C", placeholder: "password Again" }),
+            React.createElement(
+                "label",
+                { htmlFor: "roleC" },
+                "Role: "
+            ),
+            React.createElement(
+                "select",
+                { id: "roleC", name: "roleC" },
+                React.createElement(
+                    "option",
+                    { value: "NoChange" },
+                    "No Change"
+                ),
+                React.createElement(
+                    "option",
+                    { value: "Top" },
+                    "Top"
+                ),
+                React.createElement(
+                    "option",
+                    { value: "Jungle" },
+                    "Jungle"
+                ),
+                React.createElement(
+                    "option",
+                    { value: "Mid" },
+                    "Mid"
+                ),
+                React.createElement(
+                    "option",
+                    { value: "ADC" },
+                    "ADC"
+                ),
+                React.createElement(
+                    "option",
+                    { value: "Support" },
+                    "Support"
+                )
+            ),
+            React.createElement("input", { type: "hidden", name: "_csrf", value: props.csrf }),
+            React.createElement("input", { className: "formSubmit", type: "submit", value: "Submit" })
+        );
+    };
+
+    ReactDOM.render(React.createElement(PWChange, { csrf: csrf }), document.querySelector("#leagueTeamgroup"));
 };
 
 var getToken = function getToken() {
@@ -461,6 +577,7 @@ var getRole = function getRole() {
 };
 
 $(document).ready(function () {
+    intervalId = -1;
     getToken();
     getRole();
 });

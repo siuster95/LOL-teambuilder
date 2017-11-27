@@ -1,8 +1,11 @@
 const models = require('../models');
 
 const LeagueTeam = models.leagueTeam;
+
+const path = require("path");
+
 const makerPage = (req, res) => {
-    return res.render('app', { csrfToken: req.csrfToken() });
+    return res.sendFile(path.join(`${__dirname} + /../../views/app.html`));
   };
 const makeTeam = (req, res) => {
   if (!req.body.name) {
@@ -23,7 +26,7 @@ const makeTeam = (req, res) => {
       teamData.Mid = req.session.account.username;
       break;
     case 'ADC':
-      teamData.Jungle = req.session.account.username;
+      teamData.ADC = req.session.account.username;
       break;
     case 'Support':
       teamData.Support = req.session.account.username;
@@ -158,7 +161,12 @@ const leave = (request, response) => {
       console.log(err);
       return res.status(400).json({ data: 'An error occurred' });
     }
-    return res.json({ data: 'Someone has left' });
+        LeagueTeam.LeagueTeamModel.removeAll(() => {
+
+            return res.json({ data: 'Someone has left' });
+        
+    });
+    
   });
 };
 
