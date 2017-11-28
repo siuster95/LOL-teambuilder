@@ -2,6 +2,7 @@ let teamjoinedname;
 let role;
 let intervalId;
 let ChangePWlink;
+let MakeTeamlink;
 
 
 const handleDomo = (e) => {
@@ -174,8 +175,9 @@ const DomoForm = (props) => {
     );
 };
 */
-
+/*
 const LeagueForm = (props) => {
+    
   return(
   <div>
   <button id="MakeTeamButton" onClick={(e) => LeagueTeamMaker(e,props.csrf)}> Make Team</button>
@@ -183,7 +185,7 @@ const LeagueForm = (props) => {
   )  
 };
 
-
+*/
 /*
 const DomoList = function(props)    {
     if(props.domos.length === 0) {
@@ -216,12 +218,20 @@ const DomoList = function(props)    {
 */
 
 const cancel = () => {
-    loadTeamsFromServer();
+    
+        loadTeamsFromServer();
+    
+        if(intervalId == -1)
+        {
+            intervalId = setInterval(loadTeamsFromServer, 50); 
+        }
 };
 
 const LeagueTeamMaker = (e, csrf) => {
+
     clearInterval(intervalId);
     intervalId = -1;
+    
     const Maker = () => {
         return (
         <form id="leagueForm" onSubmit = {handleleagueTeam} name="leagueForm" action="/maketeam" method="POST" className="domoForm">
@@ -277,8 +287,9 @@ const leave = (e, teamname) => {
       let data = `teamname=${teamname}&_csrf=${result.csrfToken}`; 
     sendAjax("POST", "/leaveTeam", data, () => {
         clearInterval(intervalId);
+        intervalId = -1;
         sendAjax("GET", "/getTeams", null, (data) => {
-        if(intervalId == undefined)
+        if(intervalId == -1)
         {
             intervalId = setInterval(loadTeamsFromServer, 50); 
         }
@@ -293,7 +304,7 @@ const leave = (e, teamname) => {
 
 
 
-const LeagueList = (props) => {
+const LeagueList = (props) => {  
   if(props.leagueteams.length === 0) {
       return(
         <div className="leagueList">
@@ -371,6 +382,14 @@ const loadDomosFromServer = () => {
 
 
 const loadTeamsFromServer = () => {
+    
+    console.log(intervalId);
+    
+    if(intervalId < 0)
+    {
+        return;
+    }
+    
     sendAjax("GET", "/getTeams", null, (data) => {
        ReactDOM.render(
           <LeagueList leagueteams={data.teams} />, document.querySelector("#leagueTeamgroup")  
@@ -379,6 +398,12 @@ const loadTeamsFromServer = () => {
 }
 
 const loadSpecificTeamsFromServer = () => {
+    
+    if(intervalId < 0)
+    {
+        return;
+    }
+    
     sendAjax("GET", "/getTeams", null, (data) => {
        ReactDOM.render(
           <SpecificLeagueList leagueteams={data.teams} />, document.querySelector("#leagueTeamgroup")  
@@ -390,10 +415,6 @@ const loadSpecificTeamsFromServer = () => {
 
 const setup = function(csrf) {
     
-    //make the form to start a team
-    ReactDOM.render(
-     <LeagueForm csrf={csrf} />, document.querySelector("#makeTeam")
-    );
     
     //show the list
     ReactDOM.render(
@@ -411,6 +432,10 @@ const setup = function(csrf) {
    ChangePWlink = document.querySelector("#ChangePW");
    ChangePWlink.addEventListener("click", (e) => {
        onChangePWclick(csrf);
+   });
+   MakeTeamlink = document.querySelector("#makeTeam");
+   MakeTeamlink.addEventListener("click", (e) => {
+       LeagueTeamMaker(e,csrf)
    });
 };
 

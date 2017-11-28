@@ -4,6 +4,7 @@ var teamjoinedname = void 0;
 var role = void 0;
 var intervalId = void 0;
 var ChangePWlink = void 0;
+var MakeTeamlink = void 0;
 
 var handleDomo = function handleDomo(e) {
     e.preventDefault();
@@ -196,21 +197,17 @@ const DomoForm = (props) => {
     );
 };
 */
-
-var LeagueForm = function LeagueForm(props) {
-    return React.createElement(
-        "div",
-        null,
-        React.createElement(
-            "button",
-            { id: "MakeTeamButton", onClick: function onClick(e) {
-                    return LeagueTeamMaker(e, props.csrf);
-                } },
-            " Make Team"
-        )
-    );
+/*
+const LeagueForm = (props) => {
+    
+  return(
+  <div>
+  <button id="MakeTeamButton" onClick={(e) => LeagueTeamMaker(e,props.csrf)}> Make Team</button>
+  </div>
+  )  
 };
 
+*/
 /*
 const DomoList = function(props)    {
     if(props.domos.length === 0) {
@@ -243,12 +240,19 @@ const DomoList = function(props)    {
 */
 
 var cancel = function cancel() {
+
     loadTeamsFromServer();
+
+    if (intervalId == -1) {
+        intervalId = setInterval(loadTeamsFromServer, 50);
+    }
 };
 
 var LeagueTeamMaker = function LeagueTeamMaker(e, csrf) {
+
     clearInterval(intervalId);
     intervalId = -1;
+
     var Maker = function Maker() {
         return React.createElement(
             "form",
@@ -301,8 +305,9 @@ var leave = function leave(e, teamname) {
         var data = "teamname=" + teamname + "&_csrf=" + result.csrfToken;
         sendAjax("POST", "/leaveTeam", data, function () {
             clearInterval(intervalId);
+            intervalId = -1;
             sendAjax("GET", "/getTeams", null, function (data) {
-                if (intervalId == undefined) {
+                if (intervalId == -1) {
                     intervalId = setInterval(loadTeamsFromServer, 50);
                 }
                 ReactDOM.render(React.createElement(LeagueList, { leagueteams: data.teams }), document.querySelector("#leagueTeamgroup"));
@@ -464,21 +469,30 @@ const loadDomosFromServer = () => {
 */
 
 var loadTeamsFromServer = function loadTeamsFromServer() {
+
+    console.log(intervalId);
+
+    if (intervalId < 0) {
+        return;
+    }
+
     sendAjax("GET", "/getTeams", null, function (data) {
         ReactDOM.render(React.createElement(LeagueList, { leagueteams: data.teams }), document.querySelector("#leagueTeamgroup"));
     });
 };
 
 var loadSpecificTeamsFromServer = function loadSpecificTeamsFromServer() {
+
+    if (intervalId < 0) {
+        return;
+    }
+
     sendAjax("GET", "/getTeams", null, function (data) {
         ReactDOM.render(React.createElement(SpecificLeagueList, { leagueteams: data.teams }), document.querySelector("#leagueTeamgroup"));
     });
 };
 
 var setup = function setup(csrf) {
-
-    //make the form to start a team
-    ReactDOM.render(React.createElement(LeagueForm, { csrf: csrf }), document.querySelector("#makeTeam"));
 
     //show the list
     ReactDOM.render(React.createElement(LeagueList, { leagueteams: [] }), document.querySelector("#leagueTeamgroup"));
@@ -493,6 +507,10 @@ var setup = function setup(csrf) {
     ChangePWlink = document.querySelector("#ChangePW");
     ChangePWlink.addEventListener("click", function (e) {
         onChangePWclick(csrf);
+    });
+    MakeTeamlink = document.querySelector("#makeTeam");
+    MakeTeamlink.addEventListener("click", function (e) {
+        LeagueTeamMaker(e, csrf);
     });
 };
 
