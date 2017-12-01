@@ -71,7 +71,10 @@ const cancel = () => {
 
 const LeagueTeamMaker = (e) => {
 
-    clearInterval(intervalId);
+    for(let x = intervalId; x > 0; x--)
+    {
+        clearInterval(x);
+    }
     intervalId = -1;
     
     const Maker = () => {
@@ -97,7 +100,10 @@ const LeagueTeamMaker = (e) => {
 const join = (e, teamname) => {
     e.preventDefault();
     
-    clearInterval(intervalId);
+    for(let x = intervalId; x > 0; x--)
+    {
+        clearInterval(x);
+    }
     intervalId = -1;
         
     teamjoinedname = teamname;
@@ -128,7 +134,10 @@ const leave = (e, teamname) => {
     
       let data = `teamname=${teamname}&_csrf=${csrf}`; 
     sendAjax("POST", "/leaveTeam", data, () => {
-        clearInterval(intervalId);
+        for(let x = intervalId; x > 0; x--)
+        {
+            clearInterval(x);
+        }
         intervalId = -1;
         sendAjax("GET", "/getTeams", null, (data) => {
             
@@ -319,7 +328,10 @@ const setup = function(csrfin) {
 
 const onChangePWclick = () => {
     
-    clearInterval(intervalId);
+    for(let x = intervalId; x > 0; x--)
+    {
+        clearInterval(x);
+    }
     intervalId = -1;
     
     let PWChange = (props) => { 

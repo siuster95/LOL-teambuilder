@@ -66,7 +66,9 @@ var cancel = function cancel() {
 
 var LeagueTeamMaker = function LeagueTeamMaker(e) {
 
-    clearInterval(intervalId);
+    for (var x = intervalId; x > 0; x--) {
+        clearInterval(x);
+    }
     intervalId = -1;
 
     var Maker = function Maker() {
@@ -93,7 +95,9 @@ var LeagueTeamMaker = function LeagueTeamMaker(e) {
 var join = function join(e, teamname) {
     e.preventDefault();
 
-    clearInterval(intervalId);
+    for (var x = intervalId; x > 0; x--) {
+        clearInterval(x);
+    }
     intervalId = -1;
 
     teamjoinedname = teamname;
@@ -121,7 +125,9 @@ var leave = function leave(e, teamname) {
 
     var data = "teamname=" + teamname + "&_csrf=" + csrf;
     sendAjax("POST", "/leaveTeam", data, function () {
-        clearInterval(intervalId);
+        for (var x = intervalId; x > 0; x--) {
+            clearInterval(x);
+        }
         intervalId = -1;
         sendAjax("GET", "/getTeams", null, function (data) {
 
@@ -445,7 +451,9 @@ var setup = function setup(csrfin) {
 
 var onChangePWclick = function onChangePWclick() {
 
-    clearInterval(intervalId);
+    for (var x = intervalId; x > 0; x--) {
+        clearInterval(x);
+    }
     intervalId = -1;
 
     var PWChange = function PWChange(props) {
