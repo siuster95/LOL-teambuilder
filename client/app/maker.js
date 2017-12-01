@@ -24,7 +24,7 @@ const handlePWChange = (e) => {
     
         if(intervalId == -1)
         {
-            intervalId = setInterval(loadTeamsFromServer, 50); 
+            intervalId = setInterval(loadTeamsFromServer, 5000); 
         }
       
   });
@@ -50,7 +50,7 @@ const handleleagueTeam = (e) => {
         
         if(intervalId == -1)
         {
-            intervalId = setInterval(loadSpecificTeamsFromServer, 50); 
+            intervalId = setInterval(loadSpecificTeamsFromServer, 5000); 
         }
         
         teamnameP.innerHTML = "teamname: " + teamjoinedname;
@@ -65,7 +65,7 @@ const cancel = () => {
     
         if(intervalId == -1)
         {
-            intervalId = setInterval(loadTeamsFromServer, 50); 
+            intervalId = setInterval(loadTeamsFromServer, 10000); 
         }
 };
 
@@ -119,7 +119,7 @@ const join = (e, teamname) => {
          
         if(intervalId == -1)
         {
-            intervalId = setInterval(loadSpecificTeamsFromServer, 50); 
+            intervalId = setInterval(loadSpecificTeamsFromServer, 5000); 
         }  
     
         teamnameP.innerHTML = "teamname: " + teamjoinedname;
@@ -149,7 +149,7 @@ const leave = (e, teamname) => {
             
         if(intervalId == -1)
         {
-            intervalId = setInterval(loadTeamsFromServer, 50); 
+            intervalId = setInterval(loadTeamsFromServer, 5000); 
         }
             ReactDOM.render(
                 <LeagueList leagueteams={data.teams} />, document.querySelector("#leagueTeamgroup")  
@@ -314,7 +314,7 @@ const setup = function(csrfin) {
     
         if(intervalId == -1)
         {
-            intervalId = setInterval(loadTeamsFromServer, 50); 
+            intervalId = setInterval(loadTeamsFromServer, 5000); 
         }
     
    

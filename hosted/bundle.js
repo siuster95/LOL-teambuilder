@@ -24,7 +24,7 @@ var handlePWChange = function handlePWChange(e) {
         loadTeamsFromServer();
 
         if (intervalId == -1) {
-            intervalId = setInterval(loadTeamsFromServer, 50);
+            intervalId = setInterval(loadTeamsFromServer, 5000);
         }
     });
     return false;
@@ -46,7 +46,7 @@ var handleleagueTeam = function handleleagueTeam(e) {
         Logoutlink.style.display = "none";
 
         if (intervalId == -1) {
-            intervalId = setInterval(loadSpecificTeamsFromServer, 50);
+            intervalId = setInterval(loadSpecificTeamsFromServer, 5000);
         }
 
         teamnameP.innerHTML = "teamname: " + teamjoinedname;
@@ -60,7 +60,7 @@ var cancel = function cancel() {
     loadTeamsFromServer();
 
     if (intervalId == -1) {
-        intervalId = setInterval(loadTeamsFromServer, 50);
+        intervalId = setInterval(loadTeamsFromServer, 10000);
     }
 };
 
@@ -112,7 +112,7 @@ var join = function join(e, teamname) {
         Logoutlink.style.display = "none";
 
         if (intervalId == -1) {
-            intervalId = setInterval(loadSpecificTeamsFromServer, 50);
+            intervalId = setInterval(loadSpecificTeamsFromServer, 5000);
         }
 
         teamnameP.innerHTML = "teamname: " + teamjoinedname;
@@ -138,7 +138,7 @@ var leave = function leave(e, teamname) {
             teamnameP.innerHTML = "teamname:";
 
             if (intervalId == -1) {
-                intervalId = setInterval(loadTeamsFromServer, 50);
+                intervalId = setInterval(loadTeamsFromServer, 5000);
             }
             ReactDOM.render(React.createElement(LeagueList, { leagueteams: data.teams }), document.querySelector("#leagueTeamgroup"));
         });
@@ -438,7 +438,7 @@ var setup = function setup(csrfin) {
     loadTeamsFromServer();
 
     if (intervalId == -1) {
-        intervalId = setInterval(loadTeamsFromServer, 50);
+        intervalId = setInterval(loadTeamsFromServer, 5000);
     }
 
     ChangePWlink.addEventListener("click", function (e) {
