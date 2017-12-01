@@ -21,11 +21,12 @@ var handlePWChange = function handlePWChange(e) {
             role = result.Role;
             roleP.innerHTML = "role: " + result.Role;
         }
-        loadTeamsFromServer();
 
         if (intervalId == -1) {
             intervalId = setInterval(loadTeamsFromServer, 5000);
         }
+
+        loadTeamsFromServer();
     });
     return false;
 };
@@ -39,7 +40,6 @@ var handleleagueTeam = function handleleagueTeam(e) {
     var csrf = $("#cs").val();
 
     sendAjax("POST", $("#leagueForm").attr("action"), $("#leagueForm").serialize(), function (returnvalue) {
-        loadSpecificTeamsFromServer();
 
         ChangePWlink.style.display = "none";
         MakeTeamlink.style.display = "none";
@@ -49,6 +49,8 @@ var handleleagueTeam = function handleleagueTeam(e) {
             intervalId = setInterval(loadSpecificTeamsFromServer, 5000);
         }
 
+        loadSpecificTeamsFromServer();
+
         teamnameP.innerHTML = "teamname: " + teamjoinedname;
     });
 
@@ -57,11 +59,11 @@ var handleleagueTeam = function handleleagueTeam(e) {
 
 var cancel = function cancel() {
 
-    loadTeamsFromServer();
-
     if (intervalId == -1) {
-        intervalId = setInterval(loadTeamsFromServer, 10000);
+        intervalId = setInterval(loadTeamsFromServer, 5000);
     }
+
+    loadTeamsFromServer();
 };
 
 var LeagueTeamMaker = function LeagueTeamMaker(e) {
@@ -105,7 +107,6 @@ var join = function join(e, teamname) {
     var data = "teamname=" + teamname + "&_csrf=" + csrf;
 
     sendAjax("POST", "/jointeam", data, function () {
-        loadSpecificTeamsFromServer();
 
         ChangePWlink.style.display = "none";
         MakeTeamlink.style.display = "none";
@@ -114,6 +115,8 @@ var join = function join(e, teamname) {
         if (intervalId == -1) {
             intervalId = setInterval(loadSpecificTeamsFromServer, 5000);
         }
+
+        loadSpecificTeamsFromServer();
 
         teamnameP.innerHTML = "teamname: " + teamjoinedname;
     });
@@ -128,20 +131,21 @@ var leave = function leave(e, teamname) {
         for (var x = intervalId; x > 0; x--) {
             clearInterval(x);
         }
+
         intervalId = -1;
-        sendAjax("GET", "/getTeams", null, function (data) {
+        ChangePWlink.style.display = "inline";
+        MakeTeamlink.style.display = "inline";
+        Logoutlink.style.display = "inline";
+        teamnameP.innerHTML = "teamname:";
 
-            ChangePWlink.style.display = "inline";
-            MakeTeamlink.style.display = "inline";
-            Logoutlink.style.display = "inline";
+        if (intervalId == -1) {
+            intervalId = setInterval(loadTeamsFromServer, 5000);
+        }
+        /*
+        ReactDOM.render(
+            <LeagueList leagueteams={data.teams} />, document.querySelector("#leagueTeamgroup")   ); */
 
-            teamnameP.innerHTML = "teamname:";
-
-            if (intervalId == -1) {
-                intervalId = setInterval(loadTeamsFromServer, 5000);
-            }
-            ReactDOM.render(React.createElement(LeagueList, { leagueteams: data.teams }), document.querySelector("#leagueTeamgroup"));
-        });
+        loadTeamsFromServer();
     });
 };
 
@@ -435,11 +439,13 @@ var setup = function setup(csrfin) {
     ReactDOM.render(React.createElement(LeagueList, { leagueteams: [] }), document.querySelector("#leagueTeamgroup"));
 
     //grab the list
-    loadTeamsFromServer();
+
 
     if (intervalId == -1) {
         intervalId = setInterval(loadTeamsFromServer, 5000);
     }
+
+    loadTeamsFromServer();
 
     ChangePWlink.addEventListener("click", function (e) {
         onChangePWclick();

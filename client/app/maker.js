@@ -20,12 +20,14 @@ const handlePWChange = (e) => {
       role = result.Role;
       roleP.innerHTML = "role: " + result.Role;
     }
-      loadTeamsFromServer();
+      
     
         if(intervalId == -1)
         {
             intervalId = setInterval(loadTeamsFromServer, 5000); 
         }
+      
+      loadTeamsFromServer();
       
   });
   return false;
@@ -42,7 +44,7 @@ const handleleagueTeam = (e) => {
     
     
     sendAjax("POST", $("#leagueForm").attr("action"), $("#leagueForm").serialize(), (returnvalue) => {
-        loadSpecificTeamsFromServer();
+        
         
         ChangePWlink.style.display = "none";
         MakeTeamlink.style.display = "none";
@@ -53,6 +55,8 @@ const handleleagueTeam = (e) => {
             intervalId = setInterval(loadSpecificTeamsFromServer, 5000); 
         }
         
+        loadSpecificTeamsFromServer();
+        
         teamnameP.innerHTML = "teamname: " + teamjoinedname;
   });
     
@@ -61,12 +65,12 @@ const handleleagueTeam = (e) => {
 
 const cancel = () => {
     
-        loadTeamsFromServer();
-    
         if(intervalId == -1)
         {
-            intervalId = setInterval(loadTeamsFromServer, 10000); 
+            intervalId = setInterval(loadTeamsFromServer, 5000); 
         }
+    
+    loadTeamsFromServer();
 };
 
 const LeagueTeamMaker = (e) => {
@@ -111,7 +115,7 @@ const join = (e, teamname) => {
     let data = `teamname=${teamname}&_csrf=${csrf}`;
     
      sendAjax("POST", "/jointeam", data ,() => {
-     loadSpecificTeamsFromServer();
+     
          
         ChangePWlink.style.display = "none";
         MakeTeamlink.style.display = "none";
@@ -121,6 +125,8 @@ const join = (e, teamname) => {
         {
             intervalId = setInterval(loadSpecificTeamsFromServer, 5000); 
         }  
+         
+        loadSpecificTeamsFromServer();
     
         teamnameP.innerHTML = "teamname: " + teamjoinedname;
          
@@ -138,24 +144,23 @@ const leave = (e, teamname) => {
         {
             clearInterval(x);
         }
+        
         intervalId = -1;
-        sendAjax("GET", "/getTeams", null, (data) => {
-            
         ChangePWlink.style.display = "inline";
         MakeTeamlink.style.display = "inline";
         Logoutlink.style.display = "inline";
-        
         teamnameP.innerHTML = "teamname:";
             
         if(intervalId == -1)
         {
             intervalId = setInterval(loadTeamsFromServer, 5000); 
         }
+            /*
             ReactDOM.render(
-                <LeagueList leagueteams={data.teams} />, document.querySelector("#leagueTeamgroup")  
-                
-       ); 
-     }); 
+                <LeagueList leagueteams={data.teams} />, document.querySelector("#leagueTeamgroup")   ); */
+            
+            loadTeamsFromServer();
+             
    });
 };
 
@@ -310,13 +315,14 @@ const setup = function(csrfin) {
     );
     
     //grab the list
-    loadTeamsFromServer();
+    
     
         if(intervalId == -1)
         {
             intervalId = setInterval(loadTeamsFromServer, 5000); 
         }
     
+    loadTeamsFromServer();
    
    ChangePWlink.addEventListener("click", (e) => {
        onChangePWclick();
