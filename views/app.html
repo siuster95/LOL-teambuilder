@@ -1,7 +1,7 @@
 <html lang="en">
 <head>
   <meta charset="utf-8"/>
-  <title>DomoMaker</title>
+  <title>LOL-teamBuilder</title>
   <script crossorigin src="https://unpkg.com/react@15/dist/react.min.js"></script>
   <script crossorigin src="https://unpkg.com/react-dom@15/dist/react-dom.min.js"></script>
   <script crossorigin src="https://unpkg.com/prop-types/prop-types.min.js"></script>
@@ -14,17 +14,33 @@
 <body>
   <nav>
     <div class="navlink"><a href="/login"><img src="/assets/img/lol-icon.png"></a></div>
-    <div class="navlink"><a href="/logout">Log out</a></div>
-      <div class="navlink"><a id="ChangePW">Change Password</a></div>
-      <div class="navlink"><a id="makeTeam">Make Team</a></div>
+    <div class="navlink"><a id="logout" href="/logout">Log out</a></div>
+    <div class="navlink"><a id="ChangePW">Change Password</a></div>
+    <div class="navlink"><a id="makeTeam">Make Team</a></div>
   </nav>
-  <section id="makeTeam">
-  </section>
-  <section id="leagueTeamgroup">
-  </section>
-  <div id="domoMessage"><img id="speech" src="/assets/img/speech.png" alt="speech box"/>
-    <h3><span id="errorMessage"></span></h3><img id="domo" src="assets/img/domo.png" alt="domo"/>
+  <div class="content">
+    <div id="UserId">
+        <h3 id="username">username:</h3>
+        <h3 id="role">Role:</h3>
+        <h3 id="teamname">teamnane:</h3>
+    </div>
+      <div id="A1">
+      <p id="Ad1">Ad Space</p>
+      </div>
+      <div id="A2">
+        <p id="Ad2">Ad Space</p>
+      </div>
+    <section id="leagueTeamgroup"></section>
+    <section id="makeTeam"></section>
+      
+    <h3 id="errorMessage"></h3>
+    
   </div>
+  <footer>
+      <p>Page by: Johnny Siu</p>
+      <p>For educational Purposes only, all copyright material belongs to their respective owners</p>
+  </footer>
   <script src="/assets/bundle.js"></script>
 </body>
+
 </html>

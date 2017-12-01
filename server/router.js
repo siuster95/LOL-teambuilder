@@ -10,8 +10,8 @@ const router = (app) => {
   // app.post('/delete', mid.requiresSecure, mid.requiresLogin, controllers.Domo.delete);
   // app.post('/change', mid.requiresSecure, mid.requiresLogin, controllers.Domo.edit);
   app.post('/signup', mid.requiresSecure, mid.requiresLogout, controllers.Account.signup);
-  app.get('/logout',mid.requiresSecure, mid.requiresLogin, controllers.Account.logout);
-  app.post("/ChangePW",mid.requiresSecure, mid.requiresLogin, controllers.Account.ChangePWandR);
+  app.get('/logout', mid.requiresSecure, mid.requiresLogin, controllers.Account.logout);
+  app.post('/ChangePW', mid.requiresSecure, mid.requiresLogin, controllers.Account.ChangePWandR);
   app.get('/maker', mid.requiresSecure, mid.requiresLogin, controllers.leagueTeam.makerPage);
   app.post('/maketeam', mid.requiresSecure, mid.requiresLogin, controllers.leagueTeam.maketeam);
   app.post('/jointeam', mid.requiresSecure, mid.requiresLogin, controllers.leagueTeam.jointeam);
@@ -19,6 +19,7 @@ const router = (app) => {
   app.get('/getRole', mid.requiresSecure, mid.requiresLogin, controllers.leagueTeam.role);
   // app.post('/maker', mid.requiresLogin, controllers.Domo.make);
   app.get('/', mid.requiresSecure, mid.requiresLogout, controllers.Account.loginPage);
+  app.get('*', controllers.notFound);
 };
 
 module.exports = router;

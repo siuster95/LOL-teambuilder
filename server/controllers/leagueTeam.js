@@ -2,14 +2,12 @@ const models = require('../models');
 
 const LeagueTeam = models.leagueTeam;
 
-const path = require("path");
+const path = require('path');
 
-const makerPage = (req, res) => {
-    return res.sendFile(path.join(`${__dirname} + /../../views/app.html`));
-  };
+const makerPage = (req, res) => res.sendFile(path.join(`${__dirname} + /../../views/app.html`));
 const makeTeam = (req, res) => {
   if (!req.body.name) {
-    return res.status(400).json({ error: 'RAWR! Name of team is required' });
+    return res.status(400).json({ error: 'Error: Name of team is required' });
   }
 
   const teamData = {
@@ -43,48 +41,17 @@ const makeTeam = (req, res) => {
 
   const teamPromise = newteam.save();
 
-  teamPromise.then(() => res.json({ redirect: '/maker' }));
-
-  teamPromise.catch((err) => {
+  teamPromise.then(() => res.json({ redirect: '/maker' })).catch((err) => {
     console.log(err);
     if (err.code === 11000) {
-      return res.status(400).json({ error: 'Team alreadly exists' });
+      return res.status(400).json({ error: 'Error: Team alreadly exists' });
     }
 
-    return res.status(400).json({ error: 'An error occurred' });
+    return res.status(400).json({ error: 'Error: An error occurred' });
   });
   return teamPromise;
 };
-/*
-const makeDomo = (req, res) => {
-  if (!req.body.name || !req.body.age || !req.body.weight) {
-    return res.status(400).json({ error: 'RAWR! name, age and weight are required' });
-  }
 
-  const domoData = {
-    name: req.body.name,
-    age: req.body.age,
-    weight: req.body.weight,
-    owner: req.session.account._id,
-  };
-
-  const newDomo = new Domo.DomoModel(domoData);
-
-  const domoPromise = newDomo.save();
-
-  domoPromise.then(() => res.json({ redirect: '/maker' }));
-
-  domoPromise.catch((err) => {
-    console.log(err);
-    if (err.code === 11000) {
-      return res.status(400).json({ error: 'Domo alreadly exists' });
-    }
-
-    return res.status(400).json({ error: 'An error occurred' });
-  });
-  return domoPromise;
-};
-*/
 
 const getTeams = (request, response) => {
   // const req = request;
@@ -93,7 +60,7 @@ const getTeams = (request, response) => {
   return LeagueTeam.LeagueTeamModel.findAll((err, docs) => {
     if (err) {
       console.log(err);
-      return res.status(400).json({ error: 'An error occurred' });
+      return res.status(400).json({ error: 'Error: An error occurred' });
     }
 
     return res.json({ teams: docs });
@@ -108,36 +75,7 @@ const getOneteam = (request, response) => {
 req.body.name, (err, docs) =>
 res.json({ teams: docs }));
 };
-/*
-const deleteDomo = (request, response) => {
-  const req = request;
-  const res = response;
 
-  return Domo.DomoModel.delete(req.session.account._id, req.body.name, (err) => {
-    if (err) {
-      console.log(err);
-      return res.status(400).json({ error: 'An error occurred' });
-    }
-
-    return res.json({ Success: 'The Domo was deleted' });
-  });
-};
-
-const EditDomo = (request, response) => {
-  const req = request;
-  const res = response;
-
-  return Domo.DomoModel.change(req.session.account._id, req.body.oldname,
-  req.body.name, req.body.age, req.body.weight, (err) => {
-    if (err) {
-      console.log(err);
-      return res.status(400).json({ error: 'An error occurred' });
-    }
-
-    return res.json({ Success: 'The Domo values were changed' });
-  });
-};
-*/
 const joinTeam = (request, response) => {
   const req = request;
   const res = response;
@@ -145,7 +83,7 @@ const joinTeam = (request, response) => {
   return LeagueTeam.LeagueTeamModel.change(req, req.body.teamname, (err) => {
     if (err) {
       console.log(err);
-      return res.status(400).json({ error: 'An error occurred' });
+      return res.status(400).json({ error: 'Error: An error occurred' });
     }
 
     return res.json({ Success: 'Someone has joined the team' });
@@ -159,14 +97,9 @@ const leave = (request, response) => {
   return LeagueTeam.LeagueTeamModel.leave(req, req.body.teamname, (err) => {
     if (err) {
       console.log(err);
-      return res.status(400).json({ data: 'An error occurred' });
+      return res.status(400).json({ data: 'Error: An error occurred' });
     }
-        LeagueTeam.LeagueTeamModel.removeAll(() => {
-
-            return res.json({ data: 'Someone has left' });
-        
-    });
-    
+    return LeagueTeam.LeagueTeamModel.removeAll(() => res.json({ data: 'Someone has left' }));
   });
 };
 
@@ -174,7 +107,7 @@ const role = (request, response) => {
   const req = request;
   const res = response;
 
-  return res.json({ role: req.session.account.Role });
+  return res.json({ role: req.session.account.Role, name: req.session.account.username });
 };
 
 

@@ -1,14 +1,11 @@
 "use strict";
 
+var errorMessage = void 0;
+
 var handleLogin = function handleLogin(e) {
     e.preventDefault();
 
     $("#domoMessage").animate({ width: "hide" }, 350);
-
-    if ($("#user").val() == "" || $("#pass").val() == "") {
-        handleError("RAWR! Username or password is empty");
-        return false;
-    }
 
     console.log($("input[name=_csrf]").val());
 
@@ -21,16 +18,6 @@ var handleSignup = function handleSignup(e) {
     e.preventDefault();
 
     $("#domoMessage").animate({ width: "hide" }, 350);
-
-    if ($("#user").val() == "" || $("#pass").val() == "" || $("#pass2").val() == "") {
-        handleError("RAWR! All fields are required");
-        return false;
-    }
-
-    if ($("#pass").val() !== $("#pass2").val()) {
-        handleError("RAWR! Passwords do not match");
-        return false;
-    }
 
     sendAjax("POST", $("#signupForm").attr("action"), $("#signupForm").serialize(), redirect);
 
@@ -54,7 +41,7 @@ var LoginWindow = function LoginWindow(props) {
         ),
         React.createElement("input", { id: "pass", type: "password", name: "pass", placeholder: "password" }),
         React.createElement("input", { type: "hidden", name: "_csrf", value: props.csrf }),
-        React.createElement("input", { className: "formSubmit", type: "submit", value: "Sign in" })
+        React.createElement("input", { className: "formButton", type: "submit", value: "Sign in" })
     );
 };
 
@@ -115,7 +102,7 @@ var SignupWindow = function SignupWindow(props) {
             )
         ),
         React.createElement("input", { type: "hidden", name: "_csrf", value: props.csrf }),
-        React.createElement("input", { className: "formSubmit", type: "submit", value: "Sign in" })
+        React.createElement("input", { className: "formButton", type: "submit", value: "Sign in" })
     );
 };
 
@@ -130,7 +117,7 @@ var createSignupWindow = function createSignupWindow(csrf) {
 var setup = function setup(csrf) {
     var loginButton = document.querySelector("#loginButton");
     var signupButton = document.querySelector("#signupButton");
-
+    errorMessage = document.querySelector("#errorMessage");
     signupButton.addEventListener("click", function (e) {
         e.preventDefault();
         createSignupWindow(csrf);
@@ -158,8 +145,10 @@ $(document).ready(function () {
 "use strict";
 
 var handleError = function handleError(message) {
-    $("#errorMessage").text(message);
-    $("#domoMessage").animate({ width: "toggle" }, 350);
+    errorMessage.innerHTML = message;
+    setTimeout(function () {
+        errorMessage.innerHTML = "";
+    }, 1000);
 };
 
 var redirect = function redirect(response) {

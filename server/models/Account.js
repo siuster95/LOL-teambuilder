@@ -87,26 +87,22 @@ AccountModel.findByUsername(username, (err, doc) => {
   });
 });
 
-AccountSchema.statics.ChangePWandRole = (username, newPassword, newRole, Accountdata, callback) => {
-    const filter = {
-        username: username,
-    };
-    
-    const update = {};
-    
-    if(newPassword != "")
-    {
-        update.password = Accountdata.password;
-        update.salt = Accountdata.salt;
-        
-    }
-    if(newRole != "NoChange")
-    {
-        update.Role = newRole;
-    }
-    
-    return AccountModel.findOneAndUpdate(filter, update).exec(callback);
-    
+AccountSchema.statics.changePWandRole = (username, newPassword, newRole, Accountdata, callback) => {
+  const filter = {
+    username,
+  };
+
+  const update = {};
+
+  if (newPassword !== '') {
+    update.password = Accountdata.password;
+    update.salt = Accountdata.salt;
+  }
+  if (newRole !== 'NoChange') {
+    update.Role = newRole;
+  }
+
+  return AccountModel.findOneAndUpdate(filter, update).exec(callback);
 };
 
 AccountModel = mongoose.model('Account', AccountSchema);

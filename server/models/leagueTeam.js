@@ -101,7 +101,7 @@ leagueTeamSchema.statics.change = (req, teamname, callback) => {
       set.Mid = req.session.account.username;
       break;
     case 'ADC':
-      set.Jungle = req.session.account.username;
+      set.ADC = req.session.account.username;
       break;
     case 'Support':
       set.Support = req.session.account.username;
@@ -140,13 +140,12 @@ leagueTeamSchema.statics.leave = (req, teamname, callback) => {
     default:
       console.log('No Role for some reason');
   }
-  update.$inc = { Count: -1};
+  update.$inc = { Count: -1 };
   return LeagueTeamModel.findOneAndUpdate(filter, update).exec(callback);
 };
 
-leagueTeamSchema.statics.removeAll = (callback) => {
-    return LeagueTeamModel.deleteMany({Count:0}).exec(callback);
-}
+leagueTeamSchema.statics.removeAll = (callback) =>
+LeagueTeamModel.deleteMany({ Count: 0 }).exec(callback);
 
 LeagueTeamModel = mongoose.model('leagueTeam', leagueTeamSchema);
 

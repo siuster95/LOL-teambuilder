@@ -1,12 +1,10 @@
+let errorMessage;
+
+
 const handleLogin = (e) => {
     e.preventDefault();
 
     $("#domoMessage").animate({width:"hide"},350);
-
-    if($("#user").val() == "" || $("#pass").val() == "") {
-        handleError("RAWR! Username or password is empty");
-        return false;
-    }
 
     console.log($("input[name=_csrf]").val());
 
@@ -19,16 +17,6 @@ const handleSignup = (e) => {
     e.preventDefault();
     
     $("#domoMessage").animate({width:"hide"},350);
-    
-    if($("#user").val() == "" || $("#pass").val() == "" || $("#pass2").val() == "") {
-        handleError("RAWR! All fields are required");
-        return false;
-    }
-    
-    if($("#pass").val() !== $("#pass2").val()) {
-        handleError("RAWR! Passwords do not match");
-        return false;
-    }
     
     sendAjax("POST", $("#signupForm").attr("action"), $("#signupForm").serialize(), redirect);
     
@@ -43,7 +31,7 @@ const LoginWindow = (props) => {
     <label htmlFor="pass">Password: </label>
     <input id="pass" type="password" name="pass" placeholder="password"/>
     <input type="hidden" name="_csrf" value={props.csrf}/>
-    <input className="formSubmit" type="submit" value="Sign in"/>
+    <input className="formButton" type="submit" value="Sign in"/>
     </form>
     );
 };
@@ -67,7 +55,7 @@ const SignupWindow = (props) => {
         <option value="Support">Support</option>
     </select>
     <input type="hidden" name="_csrf" value={props.csrf}/>
-    <input className="formSubmit" type="submit" value="Sign in"/>
+    <input className="formButton" type="submit" value="Sign in"/>
     </form>
     );
 };
@@ -90,7 +78,7 @@ const createSignupWindow = (csrf) => {
 const setup = (csrf) => {
   const loginButton = document.querySelector("#loginButton");
   const signupButton = document.querySelector("#signupButton");
-    
+  errorMessage = document.querySelector("#errorMessage");
   signupButton.addEventListener("click", (e) => {
      e.preventDefault();
      createSignupWindow(csrf);
