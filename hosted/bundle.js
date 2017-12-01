@@ -435,20 +435,12 @@ var setup = function setup(csrfin) {
         intervalId = setInterval(loadTeamsFromServer, 50);
     }
 
-    ChangePWlink = document.querySelector("#ChangePW");
     ChangePWlink.addEventListener("click", function (e) {
         onChangePWclick();
     });
-    MakeTeamlink = document.querySelector("#makeTeam");
     MakeTeamlink.addEventListener("click", function (e) {
         LeagueTeamMaker(e);
     });
-    Logoutlink = document.querySelector("#logout");
-    usernameP = document.querySelector("#username");
-    teamnameP = document.querySelector("#teamname");
-    roleP = document.querySelector("#role");
-
-    errorMessage = document.querySelector("#errorMessage");
 };
 
 var onChangePWclick = function onChangePWclick() {
@@ -538,6 +530,13 @@ var getRole = function getRole() {
 
 $(document).ready(function () {
     intervalId = -1;
+    ChangePWlink = document.querySelector("#ChangePW");
+    MakeTeamlink = document.querySelector("#makeTeam");
+    Logoutlink = document.querySelector("#logout");
+    usernameP = document.querySelector("#username");
+    teamnameP = document.querySelector("#teamname");
+    roleP = document.querySelector("#role");
+    errorMessage = document.querySelector("#errorMessage");
     getToken();
     getRole();
 });
