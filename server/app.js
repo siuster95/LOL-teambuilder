@@ -10,10 +10,14 @@ const session = require('express-session');
 const RedisStore = require('connect-redis')(session);
 const url = require('url');
 const csrf = require('csurf');
+const socketio = require('socket.io');
+// const http = require('http');
+const sockets = require('./socket.js');
 
 const port = process.env.PORT || process.env.NODE_PORT || 3000;
 
 const dbURL = process.env.MONGODB_URI || 'mongodb://localhost/LOLteamBuilder';
+
 
 mongoose.connect(dbURL, (err) => {
   if (err) {
@@ -38,6 +42,8 @@ if (process.env.REDISCLOUD_URL) {
 const router = require('./router.js');
 
 const app = express();
+
+
 app.use('/assets', express.static(path.resolve(`${__dirname}/../hosted/`)));
 app.use(favicon(`${__dirname}/../hosted/img/favicon.png`));
 app.disable('x-powered-by');
@@ -70,12 +76,18 @@ app.use((err, req, res, next) => {
   return false;
 });
 
+
 router(app);
 
-app.listen(port, (err) => {
+
+const server = app.listen(port, (err) => {
   if (err) {
     throw err;
   }
   console.log(`Listening on port ${port}`);
 });
+
+const io = socketio.listen(server);
+
+sockets.setupSockets(io);
 

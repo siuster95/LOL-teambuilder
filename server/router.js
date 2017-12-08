@@ -17,6 +17,7 @@ const router = (app) => {
   app.post('/jointeam', mid.requiresSecure, mid.requiresLogin, controllers.leagueTeam.jointeam);
   app.post('/leaveTeam', mid.requiresSecure, mid.requiresLogin, controllers.leagueTeam.leave);
   app.get('/getRole', mid.requiresSecure, mid.requiresLogin, controllers.leagueTeam.role);
+  app.post('/selectChamp', mid.requiresSecure, mid.requiresLogin, controllers.leagueTeam.SetChamp);
   // app.post('/maker', mid.requiresLogin, controllers.Domo.make);
   app.get('/', mid.requiresSecure, mid.requiresLogout, controllers.Account.loginPage);
   app.get('*', controllers.notFound);

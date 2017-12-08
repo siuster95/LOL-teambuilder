@@ -110,6 +110,20 @@ const role = (request, response) => {
   return res.json({ role: req.session.account.Role, name: req.session.account.username });
 };
 
+const SetChamp = (request, response) => {
+  const req = request;
+  const res = response;
+
+  return LeagueTeam.LeagueTeamModel.addChamp(req, req.body.teamname, req.body.Champ, (err) => {
+    if (err) {
+      console.log(err);
+      return res.status(400).json({ error: 'Error: An error occurred' });
+    }
+
+    return res.json({ Success: 'Someone has decided on a Champ' });
+  });
+};
+
 
 module.exports.getTeams = getTeams;
 module.exports.maketeam = makeTeam;
@@ -118,3 +132,4 @@ module.exports.getOneteam = getOneteam;
 module.exports.leave = leave;
 module.exports.role = role;
 module.exports.makerPage = makerPage;
+module.exports.SetChamp = SetChamp;

@@ -9,6 +9,11 @@ let usernameP;
 let teamnameP;
 let roleP;
 let csrf;
+let socket;
+let username;
+let textinput;
+let chatbox;
+let optionselect;
 
 const handlePWChange = (e) => {
   e.preventDefault();
@@ -24,7 +29,7 @@ const handlePWChange = (e) => {
     
         if(intervalId == -1)
         {
-            intervalId = setInterval(loadTeamsFromServer, 5000); 
+            intervalId = setInterval(loadTeamsFromServer, 1000); 
         }
       
       loadTeamsFromServer();
@@ -52,12 +57,14 @@ const handleleagueTeam = (e) => {
         
         if(intervalId == -1)
         {
-            intervalId = setInterval(loadSpecificTeamsFromServer, 5000); 
+            intervalId = setInterval(loadSpecificTeamsFromServer, 1000); 
         }
         
         loadSpecificTeamsFromServer();
         
         teamnameP.innerHTML = "teamname: " + teamjoinedname;
+        
+        socket.emit("makeTeam",{name: username, team: teamjoinedname});
   });
     
     return false;   
@@ -67,7 +74,7 @@ const cancel = () => {
     
         if(intervalId == -1)
         {
-            intervalId = setInterval(loadTeamsFromServer, 5000); 
+            intervalId = setInterval(loadTeamsFromServer, 1000); 
         }
     
     loadTeamsFromServer();
@@ -123,12 +130,14 @@ const join = (e, teamname) => {
          
         if(intervalId == -1)
         {
-            intervalId = setInterval(loadSpecificTeamsFromServer, 5000); 
+            intervalId = setInterval(loadSpecificTeamsFromServer, 1000); 
         }  
          
         loadSpecificTeamsFromServer();
     
         teamnameP.innerHTML = "teamname: " + teamjoinedname;
+         
+        socket.emit("jointeam",{team:teamjoinedname, name:username});
          
   });
     
@@ -150,10 +159,17 @@ const leave = (e, teamname) => {
         MakeTeamlink.style.display = "inline";
         Logoutlink.style.display = "inline";
         teamnameP.innerHTML = "teamname:";
-            
+        socket.emit("leaveteam",{}); 
+        teamjoinedname = "";
+        
+        textinput = undefined;
+        chatbox = undefined;
+        
+        
+        
         if(intervalId == -1)
         {
-            intervalId = setInterval(loadTeamsFromServer, 5000); 
+            intervalId = setInterval(loadTeamsFromServer, 1000); 
         }
             /*
             ReactDOM.render(
@@ -236,34 +252,65 @@ const SpecificLeagueList = (props) => {
              <tr>
                 <th>Role</th>
                 <th>Username</th>
+                <th>Champs</th>
              </tr>
              <tr>
                 <td>Top:</td>
                 <td>{leagueteam.Top}</td>
+                <td>{leagueteam.TopChamp}</td>
              </tr>
              <tr>
                  <td>Jungle:</td>
                  <td>{leagueteam.Jungle}</td>
+                 <td>{leagueteam.JungleChamp}</td>
              </tr>
              <tr>
                 <td>Mid:</td>
                 <td>{leagueteam.Mid}</td>
+                <td>{leagueteam.MidChamp}</td>
              </tr>
              <tr>
                 <td>ADC:</td>
                 <td>{leagueteam.ADC}</td>
+                <td>{leagueteam.ADCChamp}</td>
              </tr>
              <tr>
                 <td>Support:</td>
                 <td>{leagueteam.Support}</td>
+                <td>{leagueteam.SupportChamp}</td>
              </tr>
              
          </table>
          <button className="formButton" onClick={ (e) => leave(e,leagueteam.name) }>Leave</button>
+            
+         <div>
+         <label htmlFor="TextInput">Message: </label>
+         <input id="MsgInput" type="text" name="TextInput" placeholder="Message here"/>
+         <label htmlFor="Chat">Chat: </label>
+         <textarea rows="4" cols="50" id="Chatbox" type="text" name="Chat">
+         </textarea>
+         <button className="formButton" onClick={ (e) => SendMsgtoServer(e)}>Send</button>
+         </div>
+             
+         <div>
+            <label htmlFor="ChampSelect">Champ: </label>    
+            <select id="ChampSelect" name="ChampSelect">
+                <option value="No Change">No Change</option>
+                <option value="Ahri">Ahri</option>
+                <option value="Jarven 4">Jarven 4</option>
+                <option value="Gnar">Gnar</option>
+                <option value="Miss Fortune">Miss Fortune</option>
+                <option value="Soraka">Soraka</option>
+            </select>
+            <button className="formButton" onClick={(e) => SendChamptoServer(e)}>Submit</button>
+         </div>
+             
+        
        </div>
      );
     }
   });
+    
     
     return (
         <div class="leagueList">
@@ -271,6 +318,24 @@ const SpecificLeagueList = (props) => {
         </div>
     );
 };
+
+const SendMsgtoServer = (e) => {
+    e.preventDefault();
+    //send msg and name to server
+    let message = textinput.value;
+    socket.emit("msgToServer", {name:username, msg: message});
+    textinput.value = "";
+};
+
+const SendChamptoServer = (e) => {
+    e.preventDefault();
+    let Champ = optionselect.options[optionselect.selectedIndex].value;
+    let data = `teamname=${teamjoinedname}&_csrf=${csrf}&Champ=${Champ}`; 
+    
+    sendAjax("POST", "/selectChamp", data, () => {
+        
+    });
+}
 
 
 const loadTeamsFromServer = () => {
@@ -298,8 +363,14 @@ const loadSpecificTeamsFromServer = () => {
     
     sendAjax("GET", "/getTeams", null, (data) => {
        ReactDOM.render(
-          <SpecificLeagueList leagueteams={data.teams} />, document.querySelector("#leagueTeamgroup")  
-       ); 
+          <SpecificLeagueList leagueteams={data.teams} />, document.querySelector("#leagueTeamgroup")
+       );
+            
+        
+             
+    grabInTeamcomponents();
+    
+        
     });
 }
 
@@ -319,7 +390,7 @@ const setup = function(csrfin) {
     
         if(intervalId == -1)
         {
-            intervalId = setInterval(loadTeamsFromServer, 5000); 
+            intervalId = setInterval(loadTeamsFromServer, 1000); 
         }
     
     loadTeamsFromServer();
@@ -378,9 +449,16 @@ const getRole = () => {
     sendAjax("GET", "/getRole", null, (result) => {
         role = result.role;
         usernameP.innerHTML = "username: " + result.name;
+        username = result.name;
         roleP.innerHTML = "role: " + result.role;
     });
 }
+
+const grabInTeamcomponents = () => {
+    textinput = document.querySelector("#MsgInput");
+    chatbox = document.querySelector("#Chatbox");  
+    optionselect = document.querySelector("#ChampSelect");
+};
 
 $(document).ready(function() {
    intervalId = -1;
@@ -393,5 +471,14 @@ $(document).ready(function() {
    errorMessage = document.querySelector("#errorMessage");
    getToken(); 
    getRole();
+   socket = io.connect();
+   socket.on("joined", () => {
+      console.log("connected on socket io");
+   });
+    
+   socket.on("msg", (data) => {
+       let message = `${data.name} said: ${data.msg} \n`;
+       chatbox.value += message;
+   });
 
 });

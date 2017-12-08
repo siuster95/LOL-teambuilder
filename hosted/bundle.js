@@ -11,6 +11,11 @@ var usernameP = void 0;
 var teamnameP = void 0;
 var roleP = void 0;
 var csrf = void 0;
+var socket = void 0;
+var username = void 0;
+var textinput = void 0;
+var chatbox = void 0;
+var optionselect = void 0;
 
 var handlePWChange = function handlePWChange(e) {
     e.preventDefault();
@@ -23,7 +28,7 @@ var handlePWChange = function handlePWChange(e) {
         }
 
         if (intervalId == -1) {
-            intervalId = setInterval(loadTeamsFromServer, 5000);
+            intervalId = setInterval(loadTeamsFromServer, 1000);
         }
 
         loadTeamsFromServer();
@@ -46,12 +51,14 @@ var handleleagueTeam = function handleleagueTeam(e) {
         Logoutlink.style.display = "none";
 
         if (intervalId == -1) {
-            intervalId = setInterval(loadSpecificTeamsFromServer, 5000);
+            intervalId = setInterval(loadSpecificTeamsFromServer, 1000);
         }
 
         loadSpecificTeamsFromServer();
 
         teamnameP.innerHTML = "teamname: " + teamjoinedname;
+
+        socket.emit("makeTeam", { name: username, team: teamjoinedname });
     });
 
     return false;
@@ -60,7 +67,7 @@ var handleleagueTeam = function handleleagueTeam(e) {
 var cancel = function cancel() {
 
     if (intervalId == -1) {
-        intervalId = setInterval(loadTeamsFromServer, 5000);
+        intervalId = setInterval(loadTeamsFromServer, 1000);
     }
 
     loadTeamsFromServer();
@@ -113,12 +120,14 @@ var join = function join(e, teamname) {
         Logoutlink.style.display = "none";
 
         if (intervalId == -1) {
-            intervalId = setInterval(loadSpecificTeamsFromServer, 5000);
+            intervalId = setInterval(loadSpecificTeamsFromServer, 1000);
         }
 
         loadSpecificTeamsFromServer();
 
         teamnameP.innerHTML = "teamname: " + teamjoinedname;
+
+        socket.emit("jointeam", { team: teamjoinedname, name: username });
     });
 
     return false;
@@ -137,9 +146,14 @@ var leave = function leave(e, teamname) {
         MakeTeamlink.style.display = "inline";
         Logoutlink.style.display = "inline";
         teamnameP.innerHTML = "teamname:";
+        socket.emit("leaveteam", {});
+        teamjoinedname = "";
+
+        textinput = undefined;
+        chatbox = undefined;
 
         if (intervalId == -1) {
-            intervalId = setInterval(loadTeamsFromServer, 5000);
+            intervalId = setInterval(loadTeamsFromServer, 1000);
         }
         /*
         ReactDOM.render(
@@ -316,6 +330,11 @@ var SpecificLeagueList = function SpecificLeagueList(props) {
                             "th",
                             null,
                             "Username"
+                        ),
+                        React.createElement(
+                            "th",
+                            null,
+                            "Champs"
                         )
                     ),
                     React.createElement(
@@ -330,6 +349,11 @@ var SpecificLeagueList = function SpecificLeagueList(props) {
                             "td",
                             null,
                             leagueteam.Top
+                        ),
+                        React.createElement(
+                            "td",
+                            null,
+                            leagueteam.TopChamp
                         )
                     ),
                     React.createElement(
@@ -344,6 +368,11 @@ var SpecificLeagueList = function SpecificLeagueList(props) {
                             "td",
                             null,
                             leagueteam.Jungle
+                        ),
+                        React.createElement(
+                            "td",
+                            null,
+                            leagueteam.JungleChamp
                         )
                     ),
                     React.createElement(
@@ -358,6 +387,11 @@ var SpecificLeagueList = function SpecificLeagueList(props) {
                             "td",
                             null,
                             leagueteam.Mid
+                        ),
+                        React.createElement(
+                            "td",
+                            null,
+                            leagueteam.MidChamp
                         )
                     ),
                     React.createElement(
@@ -372,6 +406,11 @@ var SpecificLeagueList = function SpecificLeagueList(props) {
                             "td",
                             null,
                             leagueteam.ADC
+                        ),
+                        React.createElement(
+                            "td",
+                            null,
+                            leagueteam.ADCChamp
                         )
                     ),
                     React.createElement(
@@ -386,6 +425,11 @@ var SpecificLeagueList = function SpecificLeagueList(props) {
                             "td",
                             null,
                             leagueteam.Support
+                        ),
+                        React.createElement(
+                            "td",
+                            null,
+                            leagueteam.SupportChamp
                         )
                     )
                 ),
@@ -395,6 +439,79 @@ var SpecificLeagueList = function SpecificLeagueList(props) {
                             return leave(e, leagueteam.name);
                         } },
                     "Leave"
+                ),
+                React.createElement(
+                    "div",
+                    null,
+                    React.createElement(
+                        "label",
+                        { htmlFor: "TextInput" },
+                        "Message: "
+                    ),
+                    React.createElement("input", { id: "MsgInput", type: "text", name: "TextInput", placeholder: "Message here" }),
+                    React.createElement(
+                        "label",
+                        { htmlFor: "Chat" },
+                        "Chat: "
+                    ),
+                    React.createElement("textarea", { rows: "4", cols: "50", id: "Chatbox", type: "text", name: "Chat" }),
+                    React.createElement(
+                        "button",
+                        { className: "formButton", onClick: function onClick(e) {
+                                return SendMsgtoServer(e);
+                            } },
+                        "Send"
+                    )
+                ),
+                React.createElement(
+                    "div",
+                    null,
+                    React.createElement(
+                        "label",
+                        { htmlFor: "ChampSelect" },
+                        "Champ: "
+                    ),
+                    React.createElement(
+                        "select",
+                        { id: "ChampSelect", name: "ChampSelect" },
+                        React.createElement(
+                            "option",
+                            { value: "No Change" },
+                            "No Change"
+                        ),
+                        React.createElement(
+                            "option",
+                            { value: "Ahri" },
+                            "Ahri"
+                        ),
+                        React.createElement(
+                            "option",
+                            { value: "Jarven 4" },
+                            "Jarven 4"
+                        ),
+                        React.createElement(
+                            "option",
+                            { value: "Gnar" },
+                            "Gnar"
+                        ),
+                        React.createElement(
+                            "option",
+                            { value: "Miss Fortune" },
+                            "Miss Fortune"
+                        ),
+                        React.createElement(
+                            "option",
+                            { value: "Soraka" },
+                            "Soraka"
+                        )
+                    ),
+                    React.createElement(
+                        "button",
+                        { className: "formButton", onClick: function onClick(e) {
+                                return SendChamptoServer(e);
+                            } },
+                        "Submit"
+                    )
                 )
             );
         }
@@ -405,6 +522,22 @@ var SpecificLeagueList = function SpecificLeagueList(props) {
         { "class": "leagueList" },
         teamNodes
     );
+};
+
+var SendMsgtoServer = function SendMsgtoServer(e) {
+    e.preventDefault();
+    //send msg and name to server
+    var message = textinput.value;
+    socket.emit("msgToServer", { name: username, msg: message });
+    textinput.value = "";
+};
+
+var SendChamptoServer = function SendChamptoServer(e) {
+    e.preventDefault();
+    var Champ = optionselect.options[optionselect.selectedIndex].value;
+    var data = "teamname=" + teamjoinedname + "&_csrf=" + csrf + "&Champ=" + Champ;
+
+    sendAjax("POST", "/selectChamp", data, function () {});
 };
 
 var loadTeamsFromServer = function loadTeamsFromServer() {
@@ -428,6 +561,8 @@ var loadSpecificTeamsFromServer = function loadSpecificTeamsFromServer() {
 
     sendAjax("GET", "/getTeams", null, function (data) {
         ReactDOM.render(React.createElement(SpecificLeagueList, { leagueteams: data.teams }), document.querySelector("#leagueTeamgroup"));
+
+        grabInTeamcomponents();
     });
 };
 
@@ -442,7 +577,7 @@ var setup = function setup(csrfin) {
 
 
     if (intervalId == -1) {
-        intervalId = setInterval(loadTeamsFromServer, 5000);
+        intervalId = setInterval(loadTeamsFromServer, 1000);
     }
 
     loadTeamsFromServer();
@@ -538,8 +673,15 @@ var getRole = function getRole() {
     sendAjax("GET", "/getRole", null, function (result) {
         role = result.role;
         usernameP.innerHTML = "username: " + result.name;
+        username = result.name;
         roleP.innerHTML = "role: " + result.role;
     });
+};
+
+var grabInTeamcomponents = function grabInTeamcomponents() {
+    textinput = document.querySelector("#MsgInput");
+    chatbox = document.querySelector("#Chatbox");
+    optionselect = document.querySelector("#ChampSelect");
 };
 
 $(document).ready(function () {
@@ -553,6 +695,15 @@ $(document).ready(function () {
     errorMessage = document.querySelector("#errorMessage");
     getToken();
     getRole();
+    socket = io.connect();
+    socket.on("joined", function () {
+        console.log("connected on socket io");
+    });
+
+    socket.on("msg", function (data) {
+        var message = data.name + " said: " + data.msg + " \n";
+        chatbox.value += message;
+    });
 });
 "use strict";
 

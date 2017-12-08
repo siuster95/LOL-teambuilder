@@ -49,6 +49,31 @@ const leagueTeamSchema = new mongoose.Schema({
     default: null,
   },
 
+  TopChamp: {
+    type: String,
+    default: null,
+  },
+
+  JungleChamp: {
+    type: String,
+    default: null,
+  },
+
+  MidChamp: {
+    type: String,
+    default: null,
+  },
+
+  ADCChamp: {
+    type: String,
+    default: null,
+  },
+
+  SupportChamp: {
+    type: String,
+    default: null,
+  },
+
   Count: {
     type: Number,
   },
@@ -124,18 +149,23 @@ leagueTeamSchema.statics.leave = (req, teamname, callback) => {
   switch (req.session.account.Role) {
     case 'Top':
       update.Top = null;
+      update.TopChamp = null;
       break;
     case 'Jungle':
       update.Jungle = null;
+      update.JungleChamp = null;
       break;
     case 'Mid':
       update.Mid = null;
+      update.MidChamp = null;
       break;
     case 'ADC':
       update.ADC = null;
+      update.ADCChamp = null;
       break;
     case 'Support':
       update.Support = null;
+      update.SupportChamp = null;
       break;
     default:
       console.log('No Role for some reason');
@@ -144,9 +174,38 @@ leagueTeamSchema.statics.leave = (req, teamname, callback) => {
   return LeagueTeamModel.findOneAndUpdate(filter, update).exec(callback);
 };
 
-leagueTeamSchema.statics.removeAll = (callback) =>
-LeagueTeamModel.deleteMany({ Count: 0 }).exec(callback);
+leagueTeamSchema.statics.addChamp = (req, teamname, Champ, callback) => {
+  const filter = {
+    name: teamname,
+  };
+  const update = {};
+  if (Champ !== 'No Change') {
+    switch (req.session.account.Role) {
+      case 'Top':
+        update.TopChamp = Champ;
+        break;
+      case 'Jungle':
+        update.JungleChamp = Champ;
+        break;
+      case 'Mid':
+        update.MidChamp = Champ;
+        break;
+      case 'ADC':
+        update.ADCChamp = Champ;
+        break;
+      case 'Support':
+        update.SupportChamp = Champ;
+        break;
+      default:
+        console.log('Error: account has no Role');
+    }
+  }
 
+  return LeagueTeamModel.findOneAndUpdate(filter, update).exec(callback);
+};
+
+leagueTeamSchema.statics.removeAll = (callback) =>
+    LeagueTeamModel.deleteMany({ Count: 0 }).exec(callback);
 LeagueTeamModel = mongoose.model('leagueTeam', leagueTeamSchema);
 
 module.exports.LeagueTeamModel = LeagueTeamModel;
