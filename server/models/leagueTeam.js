@@ -78,6 +78,10 @@ const leagueTeamSchema = new mongoose.Schema({
     type: Number,
   },
 
+  Rank: {
+    type: String,
+  },
+
   createData: {
     type: Date,
     default: Date.now(),
@@ -89,7 +93,13 @@ leagueTeamSchema.statics.toAPI = (doc) => ({
   age: doc.age,
 });
 
-leagueTeamSchema.statics.findAll = (callback) => LeagueTeamModel.find().exec(callback);
+leagueTeamSchema.statics.findAll = (Rank, callback) => {
+  const search = {
+    Rank,
+  };
+
+  LeagueTeamModel.find(search).exec(callback);
+};
 
 leagueTeamSchema.statics.findOneTeam = (teamname, callback) => {
   const querystring = { name: teamname };

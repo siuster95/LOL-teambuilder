@@ -199,7 +199,7 @@ nav:nth-child(1) {
     color: red;
     font-style: italic;
     position: absolute;
-    top: 100px;
+    top: 125px;
 }
 
 #domo {
@@ -377,6 +377,7 @@ a:hover {
 .content {
     padding:20px;
     min-height:100%;
+    margin-bottom: 60px;
 }
 
 footer {
@@ -398,10 +399,12 @@ footer {
 table, th, td {
     border: 1px solid black;
     font-size: 18pt;
+    width:300px;
+    margin-top:20px;
 }
 .leagueList{
     margin: auto;
-    width: 203px;
+    width: 300px;
     margin-bottom: 50px;
 }
 .Join, .leave {
@@ -412,7 +415,7 @@ table, th, td {
 
 /* PW change form*/
 
-#ChangePWorRoleForm {
+#ChangePWForm {
     position: relative;
     width: 400px;
     margin:auto;
@@ -437,14 +440,13 @@ table, th, td {
 #roleCLabel {
     position: relative;
     display: block;
-    top: 30px;
 }
 
 #roleC {
     position: relative;
     display: block;
-    left: 100px;
-    top: 11px;
+    left: 42px;
+    top: -19px;
 }
 
 #ChangePWSubmit{
@@ -498,7 +500,7 @@ table, th, td {
     position:absolute;
     height: 329px;
     width:200px;
-    top:267px;
+    top:417px;
     border: 1px black solid;
     left:20px;
 }
@@ -516,7 +518,8 @@ table, th, td {
     width:200px;
     border: 1px black solid;
     right:20px;
-    top:267px;
+    top:342px;
+    margin-top: 75px;
 }
 
 #Ad2 {
@@ -525,6 +528,126 @@ table, th, td {
     left:41px;
     font-size: 24pt;
 }
+
+#ChangeRoleorRankForm {
+    position: relative;
+    width:400px;
+    margin:auto;
+    border:black 1px solid;
+    padding:20px;
+    top:300px;
+    height:175px;
+}
+
+#normalBut {
+    position:relative;
+    display: inline-block;
+    left: calc(50% - 77px);
+}
+
+#rankedBut{
+    position: relative;
+    display: inline-block;
+    left: calc(50% - 124px);
+}
+
+#rank {
+    position:relative;
+    top: -44px;
+}
+
+#rankLabel {
+    position:relative;
+    top: -43px;
+}
+
+#ChangeRRsubmit {
+    position:relative;
+    display:inline-block;
+    top:46px;
+    left:-116px;
+}
+
+#ChangeRRCancel {
+    position:relative;
+    display:inline-block;
+    top:46px;
+    
+}
+
+#TextInputLabel {
+    position:relative;
+    left:-200px;
+    top: 30px;
+}
+
+#MsgInput {
+    position:relative;
+    left: -197px;
+    top:30px;
+}
+
+#ChatLabel {
+    position: relative;
+    left: -200px;
+}
+
+#Chatbox {
+    position:relative;
+    top: -17px;
+    left: -151px;
+}
+
+#SendButton{
+    position:relative;
+    top: 30px;
+    left: -214px;
+}
+
+#ChampSelectLabel{
+    position: relative;
+    top: -40px;
+    left: 269px;
+}
+
+#ChampSelect{
+    position:relative;
+    top:-39px;
+    left:275px;
+}
+
+#ChampSubmitButton{
+    position:relative;
+    top:-37px;
+    left:233px;
+}
+
+#roleLoginLabel{
+    position:relative;
+    left:-45px;
+}
+
+#roleLogin{
+    position:relative;
+    left:-50px;
+}
+
+#rankLoginLabel{
+    position:relative;
+    left: -83px;
+}
+
+#rankLogin{
+    position:relative;
+    top:-21px;
+    left:204px;
+}
+
+
+
+
+
+
 
 
 

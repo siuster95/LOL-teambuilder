@@ -32,6 +32,11 @@ const AccountSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  Rank: {
+    type: String,
+    required: true,
+  },
+
 });
 
 AccountSchema.statics.toAPI = doc => ({
@@ -39,6 +44,7 @@ AccountSchema.statics.toAPI = doc => ({
   username: doc.username,
   _id: doc._id,
   Role: doc.Role,
+  Rank: doc.Rank,
 });
 
 const validatePassword = (doc, password, callback) => {
@@ -87,7 +93,7 @@ AccountModel.findByUsername(username, (err, doc) => {
   });
 });
 
-AccountSchema.statics.changePWandRole = (username, newPassword, newRole, Accountdata, callback) => {
+AccountSchema.statics.changePW = (username, newPassword, Accountdata, callback) => {
   const filter = {
     username,
   };
@@ -98,8 +104,23 @@ AccountSchema.statics.changePWandRole = (username, newPassword, newRole, Account
     update.password = Accountdata.password;
     update.salt = Accountdata.salt;
   }
+
+  return AccountModel.findOneAndUpdate(filter, update).exec(callback);
+};
+
+AccountSchema.statics.changeRR = (username, newRole, newRank, callback) => {
+  const filter = {
+    username,
+  };
+
+  const update = {};
+
   if (newRole !== 'NoChange') {
     update.Role = newRole;
+  }
+
+  if (newRank !== 'NoChange') {
+    update.Rank = newRank;
   }
 
   return AccountModel.findOneAndUpdate(filter, update).exec(callback);

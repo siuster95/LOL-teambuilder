@@ -43,8 +43,9 @@ const signup = (request, response) => {
   req.body.pass = `${req.body.pass}`;
   req.body.pass2 = `${req.body.pass2}`;
   req.body.role = `${req.body.role}`;
+  req.body.rank = `${req.body.rank}`;
 
-  if (!req.body.username || !req.body.pass || !req.body.pass2 || !req.body.role) {
+  if (!req.body.username || !req.body.pass || !req.body.pass2 || !req.body.role || !req.body.rank) {
     return res.status(400).json({ error: 'Error: All fields are required' });
   }
 
@@ -58,6 +59,7 @@ const signup = (request, response) => {
       salt,
       password: hash,
       Role: req.body.role,
+      Rank: req.body.rank,
     };
 
     const newAccount = new Account.AccountModel(accountData);
@@ -90,7 +92,7 @@ const getToken = (request, response) => {
   res.json(csrfJSON);
 };
 
-const changePWorRole = (request, response) => {
+const changePW = (request, response) => {
   const req = request;
   const res = response;
 
@@ -102,7 +104,6 @@ const changePWorRole = (request, response) => {
 
   // cast to string
   req.body.passC = `${req.body.passC}`;
-  req.body.roleC = `${req.body.roleC}`;
 
 
   return Account.AccountModel.generateHash(req.body.passC, (salt, hash) => {
@@ -111,18 +112,48 @@ const changePWorRole = (request, response) => {
       password: hash,
     };
 
-    Account.AccountModel.changePWandRole(req.session.account.username,
-    req.body.passC, req.body.roleC, accountData, (err) => {
+    Account.AccountModel.changePW(req.session.account.username,
+    req.body.passC, accountData, (err) => {
       if (err) {
         console.log(err);
         return res.status(400).json({ error: 'Error: An error occurred' });
       }
-
+      /*
       if (req.body.roleC !== 'NoChange') {
         req.session.account.Role = req.body.roleC;
       }
-      return res.json({ Role: req.body.roleC });
+
+      if (req.body.rankC !== 'NoChange') {
+          req.session.account.Rank = req.body.rankC;
+      }
+      */
+      return res.json({ Role: req.body.roleC, Rank: req.body.rankC });
     });
+  });
+};
+
+const changeRR = (request, response) => {
+  const req = request;
+  const res = response;
+
+  Account.AccountModel.changeRR(req.session.account.username,
+  req.body.roleC, req.body.rankC, (err) => {
+    if (err) {
+      console.log(err);
+      return res.status(400).json({ error: 'Error: An error occurred' });
+    }
+
+
+    if (req.body.roleC !== 'NoChange') {
+      req.session.account.Role = req.body.roleC;
+    }
+
+    if (req.body.rankC !== 'NoChange') {
+      req.session.account.Rank = req.body.rankC;
+    }
+
+
+    return res.json({ Role: req.body.roleC, Rank: req.body.rankC });
   });
 };
 
@@ -131,4 +162,5 @@ module.exports.login = login;
 module.exports.logout = logout;
 module.exports.signup = signup;
 module.exports.getToken = getToken;
-module.exports.ChangePWandR = changePWorRole;
+module.exports.ChangePW = changePW;
+module.exports.ChangeRR = changeRR;

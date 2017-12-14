@@ -69,12 +69,12 @@ var SignupWindow = function SignupWindow(props) {
         React.createElement("input", { id: "pass2", type: "password", name: "pass2", placeholder: "retype password" }),
         React.createElement(
             "label",
-            { htmlFor: "role" },
+            { id: "roleLoginLabel", htmlFor: "roleLogin" },
             "Role: "
         ),
         React.createElement(
             "select",
-            { id: "role", name: "role" },
+            { id: "roleLogin", name: "role" },
             React.createElement(
                 "option",
                 { value: "Top" },
@@ -99,6 +99,50 @@ var SignupWindow = function SignupWindow(props) {
                 "option",
                 { value: "Support" },
                 "Support"
+            )
+        ),
+        React.createElement(
+            "label",
+            { id: "rankLoginLabel", htmlFor: "rank" },
+            "Rank: "
+        ),
+        React.createElement(
+            "select",
+            { id: "rankLogin", name: "rank" },
+            React.createElement(
+                "option",
+                { value: "Bronze" },
+                "Bronze"
+            ),
+            React.createElement(
+                "option",
+                { value: "Silver" },
+                "Silver"
+            ),
+            React.createElement(
+                "option",
+                { value: "Gold" },
+                "Gold"
+            ),
+            React.createElement(
+                "option",
+                { value: "Platinum" },
+                "Platinum"
+            ),
+            React.createElement(
+                "option",
+                { value: "Diamond" },
+                "Diamond"
+            ),
+            React.createElement(
+                "option",
+                { value: "Master" },
+                "Master"
+            ),
+            React.createElement(
+                "option",
+                { value: "Challenger" },
+                "Challenger"
             )
         ),
         React.createElement("input", { type: "hidden", name: "_csrf", value: props.csrf }),

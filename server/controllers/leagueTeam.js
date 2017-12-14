@@ -37,6 +37,13 @@ const makeTeam = (req, res) => {
   teamData.name = req.body.name;
   teamData.owner = req.session.account._id;
   teamData.Count = 1;
+
+  if (req.body.rank === 'Ranked') {
+    teamData.Rank = req.session.account.Rank;
+  } else if (req.body.rank === 'Normal') {
+    teamData.Rank = 'Normal';
+  }
+
   const newteam = new LeagueTeam.LeagueTeamModel(teamData);
 
   const teamPromise = newteam.save();
@@ -56,8 +63,16 @@ const makeTeam = (req, res) => {
 const getTeams = (request, response) => {
   // const req = request;
   const res = response;
+  const req = request;
+  let rank;
 
-  return LeagueTeam.LeagueTeamModel.findAll((err, docs) => {
+  if (req.body.rank === 'Normal') {
+    rank = 'Normal';
+  } else if (req.body.rank === 'Ranked') {
+    rank = req.session.account.Rank;
+  }
+
+  return LeagueTeam.LeagueTeamModel.findAll(rank, (err, docs) => {
     if (err) {
       console.log(err);
       return res.status(400).json({ error: 'Error: An error occurred' });
@@ -71,7 +86,7 @@ const getOneteam = (request, response) => {
   const req = request;
   const res = response;
 
-  return LeagueTeam.LeagueTeamModel.findOne(
+  return LeagueTeam.LeagueTeamModel.findOneTeam(
 req.body.name, (err, docs) =>
 res.json({ teams: docs }));
 };
@@ -107,7 +122,9 @@ const role = (request, response) => {
   const req = request;
   const res = response;
 
-  return res.json({ role: req.session.account.Role, name: req.session.account.username });
+  return res.json({ role: req.session.account.Role,
+    name: req.session.account.username,
+    rank: req.session.account.Rank });
 };
 
 const SetChamp = (request, response) => {
