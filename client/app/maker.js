@@ -21,6 +21,7 @@ let rankedBut;
 let normalBut;
 let RoleorRankLink;
 let MatchType;
+let About;
 
 const handlePWChange = (e) => {
   e.preventDefault();
@@ -285,6 +286,34 @@ const LeagueList = (props) => {
         </div>
     );
 };
+
+
+
+const aboutClick = (e) => {
+
+    for(let x = intervalId; x > 0; x--)
+    {
+        clearInterval(x);
+    }
+    intervalId = -1;
+    
+    normalBut.style.display = "none";
+    rankedBut.style.display = "none";
+    
+    const aboutP = 
+        <div id="AboutmeP">
+            <h2>About this App</h2>
+            <p>As a avid League of Legends player, I found it frustrating whenever, I had to play a game with the role that I hate the most. This problem inspired me to make this app, which allows people to create, organize and find parties to play games, normal or ranked, with and have the role that they want. Additionally, I have added functionally for members to talk with each other through chat and strategize the champs that they want to play</p>
+            <input id="AboutmePCancel" onClick = {(e) => cancel() } className="formButton" type="button" value="Back"/>              
+        </div>
+    
+    ReactDOM.render(
+            aboutP, document.querySelector("#leagueTeamgroup")   
+       ); 
+    
+    
+    
+}
 
 const SpecificLeagueList = (props) => {
     /*
@@ -604,6 +633,9 @@ const setup = function(csrfin) {
         rankedBut.style.display = "none";
         onRoleorRankclick();
    });
+   About.addEventListener("click", (e) => {
+       aboutClick();
+   })
 };
 
 const onChangePWclick = () => {
@@ -713,6 +745,7 @@ $(document).ready(function() {
    rankedBut = document.querySelector("#rankedBut");
    RoleorRankLink = document.querySelector("#ChangeRoleorRank");
    MatchType = document.querySelector("#MatchType");
+   About = document.querySelector("#About");
    getToken(); 
    getRole();
    teamsLookingfor = "Normal";

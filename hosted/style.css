@@ -643,6 +643,16 @@ table, th, td {
     left:204px;
 }
 
+#AboutmeP{
+    width:400px;
+    position:relative;
+    margin:auto;
+    border: 1px black solid;
+    padding: 10px;
+    top: 115px;
+    text-align: center;
+}
+
 
 
 

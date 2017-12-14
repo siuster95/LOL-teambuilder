@@ -23,6 +23,7 @@ var rankedBut = void 0;
 var normalBut = void 0;
 var RoleorRankLink = void 0;
 var MatchType = void 0;
+var About = void 0;
 
 var handlePWChange = function handlePWChange(e) {
     e.preventDefault();
@@ -352,6 +353,37 @@ var LeagueList = function LeagueList(props) {
         { "class": "leagueList" },
         teamNodes
     );
+};
+
+var aboutClick = function aboutClick(e) {
+
+    for (var x = intervalId; x > 0; x--) {
+        clearInterval(x);
+    }
+    intervalId = -1;
+
+    normalBut.style.display = "none";
+    rankedBut.style.display = "none";
+
+    var aboutP = React.createElement(
+        "div",
+        { id: "AboutmeP" },
+        React.createElement(
+            "h2",
+            null,
+            "About this App"
+        ),
+        React.createElement(
+            "p",
+            null,
+            "As a avid League of Legends player, I found it frustrating whenever, I had to play a game with the role that I hate the most. This problem inspired me to make this app, which allows people to create, organize and find parties to play games, normal or ranked, with and have the role that they want. Additionally, I have added functionally for members to talk with each other through chat and strategize the champs that they want to play"
+        ),
+        React.createElement("input", { id: "AboutmePCancel", onClick: function onClick(e) {
+                return cancel();
+            }, className: "formButton", type: "button", value: "Back" })
+    );
+
+    ReactDOM.render(aboutP, document.querySelector("#leagueTeamgroup"));
 };
 
 var SpecificLeagueList = function SpecificLeagueList(props) {
@@ -1309,6 +1341,9 @@ var setup = function setup(csrfin) {
         rankedBut.style.display = "none";
         onRoleorRankclick();
     });
+    About.addEventListener("click", function (e) {
+        aboutClick();
+    });
 };
 
 var onChangePWclick = function onChangePWclick() {
@@ -1492,6 +1527,7 @@ $(document).ready(function () {
     rankedBut = document.querySelector("#rankedBut");
     RoleorRankLink = document.querySelector("#ChangeRoleorRank");
     MatchType = document.querySelector("#MatchType");
+    About = document.querySelector("#About");
     getToken();
     getRole();
     teamsLookingfor = "Normal";
